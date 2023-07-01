@@ -567,12 +567,16 @@ class HomeController extends GetxController {
         deliveryTownshipInfo: _purchase.deliveryTownshipInfo,
         dateTime: DateTime.now(),
       );
-      await _database.writePurchaseData(_purchase).then((value) {
-        hideLoading();
-        Get.back();
-        Get.snackbar("လူကြီးမင်း Order တင်ခြင်း", 'အောင်မြင်ပါသည်');
-        purchaseHiveBox.put(hivePurchase.id, hivePurchase);
-      }); //submit success
+      try {
+        await _database.writePurchaseData(_purchase).then((value) {
+          hideLoading();
+          Get.back();
+          Get.snackbar("လူကြီးမင်း Order တင်ခြင်း", 'အောင်မြင်ပါသည်');
+          purchaseHiveBox.put(hivePurchase.id, hivePurchase);
+        });
+      } catch (e) {
+        log("Purchase Error: $e");
+      } //submit success
       myCart.clear();
       navIndex.value = 0;
       update([myCart, navIndex]);
