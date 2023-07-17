@@ -17,7 +17,7 @@ class ViewAllController extends GetxController {
 
   void changeSortPrice(SortPrice value) => sortPrice.value = value;
 
-  void sortingPriceList(){
+  void sortingPriceList() {
     isRefresh.value = false;
     //viewAllResultProducts.value = _homeController.viewAllModel.products;
     switch (sortPrice.value) {
@@ -39,28 +39,44 @@ class ViewAllController extends GetxController {
     viewAllResultProducts.value = _homeController.viewAllModel.products;
   }
 
-  void changeAllViewCategory(String value){
+  void changeAllViewCategory(String value) {
     isRefresh.value = false;
     category.value = value;
-    viewAllResultProducts.value = _homeController.viewAllModel.products.where((element) => element.category == category.value).toList();
-     (sortPrice.value == SortPrice.lowToHigh) ?  lowToHight() : 
-     (sortPrice.value == SortPrice.highToLow) ?  highToLow() : null;
+    viewAllResultProducts.value = _homeController.viewAllModel.products
+        .where((element) => element.category.contains(category.value))
+        .toList();
+    (sortPrice.value == SortPrice.lowToHigh)
+        ? lowToHight()
+        : (sortPrice.value == SortPrice.highToLow)
+            ? highToLow()
+            : null;
   }
 
   @override
   void onInit() {
     status = _homeController.viewAllModel.status;
     viewAllResultProducts.value = _homeController.viewAllModel.products;
-    viewAllCategories = _homeController.viewAllModel.products.map((e) => e.category).toSet().toList();
+    /* viewAllCategories = _homeController.viewAllModel.products
+        .map((e) => e.category)
+        .toSet()
+        .toList(); */
+    for (var element in _homeController.viewAllModel.products) {
+      for (var cat in element.category) {
+        if (!(viewAllCategories.contains(cat))) {
+          //we add only this category is not already contains
+          viewAllCategories.add(cat);
+        }
+      }
+    }
     super.onInit();
   }
 
   void lowToHight() {
-    viewAllResultProducts.sort((a,b) => a.price.compareTo(b.price));
+    viewAllResultProducts.sort((a, b) => a.price.compareTo(b.price));
   }
 
   void highToLow() {
-    viewAllResultProducts.sort((a,b) => a.price.compareTo(b.price));
-        viewAllResultProducts.value = viewAllResultProducts.reversed.toList();
+    viewAllResultProducts.sort((a, b) => a.price.compareTo(b.price));
+    viewAllResultProducts.value = viewAllResultProducts.reversed.toList();
   }
 }

@@ -25,49 +25,52 @@ class HomeCategoryMain extends StatelessWidget {
       height: 40,
 
       // color: Colors.green,
-      child:   controller.categories.length > 0 ? ListView.builder(
-                    padding: EdgeInsets.only(left: 20),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.categories.length,
-                    itemBuilder: (_, i) {
-                      final cate = controller.categories[i];
-                      return Container(
-                      margin: EdgeInsets.only(
-                        top: 3,
-                        bottom: 3,
-                        right: 20,
-                      ),
-                      child:  ElevatedButton(
-                        
-                          style: ButtonStyle(
-                            backgroundColor: 
-                                 MaterialStateProperty.all(Colors.white),
-                            
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            controller.setViewAllProducts(
-                                                    ViewAllModel(
-                                                      status: "${cate.name}",
-                                                      products: controller.items.where((e) => e.category == cate.name).toList(),
-                                                    )
-                                                  );
-                                                  Get.toNamed(viewAllUrl);
-                            //controller.changeCat(cate.name);
-                          },
-                          child: Text(
-                            cate.name,
-                            style: TextStyle(color: Colors.black,),
+      child: Obx(() {
+        return controller.categories.length > 0
+            ? ListView.builder(
+                padding: EdgeInsets.only(left: 20),
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.categories.length,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (_, i) {
+                  final cate = controller.categories[i];
+                  return Container(
+                    margin: EdgeInsets.only(
+                      top: 3,
+                      bottom: 3,
+                      right: 20,
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                      
-                    );}
-          ) : const SizedBox(),
-        
+                      ),
+                      onPressed: () {
+                        controller.setViewAllProducts(ViewAllModel(
+                          status: "${cate.name}",
+                          products: controller.items
+                              .where((e) => e.category.contains(cate.name))
+                              .toList(),
+                        ));
+                        Get.toNamed(viewAllUrl);
+                        //controller.changeCat(cate.name);
+                      },
+                      child: Text(
+                        cate.name,
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                })
+            : const SizedBox();
+      }),
     );
   }
 }

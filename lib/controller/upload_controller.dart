@@ -39,6 +39,15 @@ class UploadController extends GetxController {
   var status = "".obs;
   /**************************** */
   var selectedBrandId = "".obs;
+  RxList<String> selectedCategories = <String>[].obs;
+
+  void setSelectedCategories(String value) {
+    if (selectedCategories.contains(value)) {
+      selectedCategories.remove(value);
+    } else {
+      selectedCategories.add(value);
+    }
+  }
 
   void changeBrandId(String id) => selectedBrandId.value = id;
 
@@ -86,7 +95,8 @@ class UploadController extends GetxController {
       advertisementID = editItem.advertisementID ?? "";
       deliveryTimeController.text = editItem.deliveryTime ?? "";
       status.value = editItem.status;
-      _homeController.changeCat(editItem.category);
+      selectedCategories.value = List.from(editItem.category);
+      log("SelectedCategories:${selectedCategories.length}");
       if (editItem.tags.isNotEmpty) {
         editItem.tags.forEach((element) {
           tagsMap.putIfAbsent(element, () => element);
@@ -198,7 +208,7 @@ class UploadController extends GetxController {
                   requirePoint: int.tryParse(requirePointController.text),
                   advertisementID: advertisementID,
                   status: status.value,
-                  category: _homeController.category.value,
+                  category: selectedCategories,
                   tags: tagsMap.values.map((e) => e).toList(),
                   brandID: selectedBrandId.value,
                   originalPrice: int.tryParse(originalPrice.text) ?? 0,
@@ -227,7 +237,7 @@ class UploadController extends GetxController {
               requirePoint: int.tryParse(requirePointController.text),
               advertisementID: advertisementID,
               status: status.value,
-              category: _homeController.category.value,
+              category: selectedCategories,
               tags: tagsMap.values.map((e) => e).toList(),
               brandID: selectedBrandId.value,
               dateTime: DateTime.now(),

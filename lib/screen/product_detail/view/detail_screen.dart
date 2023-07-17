@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:kozarni_ecome/expaned_widget.dart';
 import 'package:kozarni_ecome/model/hive_item.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
+import '../../../utils/fun.dart';
 import '../../../widgets/product_review/product_review.dart';
 import '../../home_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -75,41 +76,38 @@ class DetailScreen extends StatelessWidget {
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
               ),
-              child: Hero(
-                tag: currentProduct.photo1,
-                child: CarouselSlider(
-                  items: [
-                    CachedNetworkImage(
-                      imageUrl: currentProduct.photo1,
-                      // "$baseUrl$itemUrl${currentProduct.photo}/get",
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    CachedNetworkImage(
-                      imageUrl: currentProduct.photo2,
-                      // "$baseUrl$itemUrl${currentProduct.photo}/get",
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    CachedNetworkImage(
-                      imageUrl: currentProduct.photo3,
-                      // "$baseUrl$itemUrl${currentProduct.photo}/get",
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ],
-                  options: CarouselOptions(
-                    height: 250,
-                    viewportFraction: 0.8,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 3),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: true,
-                    scrollDirection: Axis.horizontal,
+              child: CarouselSlider(
+                items: [
+                  CachedNetworkImage(
+                    imageUrl: currentProduct.photo1,
+                    // "$baseUrl$itemUrl${currentProduct.photo}/get",
+                    height: double.infinity,
+                    fit: BoxFit.cover,
                   ),
+                  CachedNetworkImage(
+                    imageUrl: currentProduct.photo2,
+                    // "$baseUrl$itemUrl${currentProduct.photo}/get",
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  CachedNetworkImage(
+                    imageUrl: currentProduct.photo3,
+                    // "$baseUrl$itemUrl${currentProduct.photo}/get",
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+                options: CarouselOptions(
+                  height: 250,
+                  viewportFraction: 0.8,
+                  initialPage: 0,
+                  enableInfiniteScroll: true,
+                  autoPlay: true,
+                  autoPlayInterval: Duration(seconds: 3),
+                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  enlargeCenterPage: true,
+                  scrollDirection: Axis.horizontal,
                 ),
               ),
             ),
@@ -182,26 +180,30 @@ class DetailScreen extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Category",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      //Star
-                      Text(
-                        currentProduct.category,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      //Favourite Icon
-                    ]),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Category",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
+                        const SizedBox(width: 25),
+                        Text(
+                          getCategoryFromList(currentProduct.category),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                          maxLines: 3,
+                        ),
+                        //Favourite Icon
+                      ]),
+                ),
                 SizedBox(
                   height: 20,
                 ),

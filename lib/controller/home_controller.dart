@@ -335,7 +335,7 @@ class HomeController extends GetxController {
 
     for (var i = 0; i < items.length; i++) {
       if (!_data.contains(items[i].category)) {
-        _data.add(items[i].category);
+        _data.add(items[i].category.first);
       }
     }
 
@@ -428,7 +428,7 @@ class HomeController extends GetxController {
         promotionObxValue.value = int.tryParse(pro.split("%").first) ?? 0;
         promotionType.value = right(PromotionType.percentage());
       } else {
-        promotionObxValue.value = int.tryParse(pro.split("ks").first) ?? 0;
+        promotionObxValue.value = int.tryParse(pro.split("Ks").first) ?? 0;
         promotionType.value = right(PromotionType.money());
       }
     } catch (e) {
@@ -470,7 +470,7 @@ class HomeController extends GetxController {
       size: "",
       color: model.color,
       status: model.status,
-      category: model.category,
+      category: model.category.fold("", (p, n) => p + "$n,"),
       tags: model.tags,
       dateTime: model.dateTime,
       discountPrice: model.discountPrice ?? 0,
@@ -496,7 +496,7 @@ class HomeController extends GetxController {
       size: items.where((p) => p.id == model.id).first.size,
       color: model.color,
       status: model.status,
-      category: model.category,
+      category: model.category.split(","),
       tags: model.tags,
       dateTime: model.dateTime,
       discountPrice: model.discountPrice,

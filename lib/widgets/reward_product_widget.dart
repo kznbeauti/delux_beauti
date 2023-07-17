@@ -54,52 +54,54 @@ class RewardProductWidget extends StatelessWidget {
                 Expanded(
                   child: Align(
                     alignment: Alignment.bottomLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        product.brandName!.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Text(
-                                  product.brandName ?? '',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          product.brandName!.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Text(
+                                    product.brandName ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : const SizedBox(),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(
-                            product.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
+                                )
+                              : const SizedBox(),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 5,
-                            right: 5,
-                            bottom: 10,
-                            top: 2,
-                          ),
-                          child: Text(
-                            "${product.requirePoint} Points",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 5,
+                              right: 5,
+                              bottom: 10,
+                              top: 2,
+                            ),
+                            child: Text(
+                              "${product.requirePoint} Points",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

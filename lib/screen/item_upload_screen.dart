@@ -38,7 +38,7 @@ class _UploadItemState extends State<UploadItem> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.orangeAccent,
+              color: Colors.black,
               // fontStyle: FontStyle.italic,
               wordSpacing: 2,
               letterSpacing: 3,
@@ -96,7 +96,7 @@ class _UploadItemState extends State<UploadItem> {
                   ),
                 ),
                 // Category
-                HomeCategory(),
+                ItemCategory(),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 10, bottom: 5),
                   child: Align(

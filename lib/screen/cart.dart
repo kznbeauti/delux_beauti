@@ -131,210 +131,213 @@ class CartView extends StatelessWidget {
                   left: 10,
                   right: 10,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "ကုန်ပစ္စည်းအတွက် ကျသင့်ငွေ",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            "${controller.subTotal} ကျပ်",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Obx(() {
-                      if (controller.promotionObxValue.value > 0) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            left: 10,
-                            right: 10,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "ပရိုမိုးရှင်း လျှော့ငွေ",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                controller.promotionType.value!.fold(
-                                    (l) => '',
-                                    (r) => r.map(
-                                          nothing: (_) => "",
-                                          money: (_) =>
-                                              "-${controller.promotionObxValue} ကျပ်",
-                                          percentage: (_) =>
-                                              "-${controller.promotionObxValue} %",
-                                        )),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return SizedBox();
-                      }
-                    }),
-                    Obx(() {
-                      final hasError = controller.firstTimePressedCart.value &&
-                          controller.townShipNameAndFee.isEmpty;
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: hasError
-                                ? Colors.red
-                                : Colors.white.withOpacity(0),
-                          ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 10,
+                          right: 10,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            left: 10,
-                            right: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "ကုန်ပစ္စည်းအတွက် ကျသင့်ငွေ",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Text(
+                              "${controller.subTotal} ကျပ်",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Obx(() {
+                        if (controller.promotionObxValue.value > 0) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              left: 10,
+                              right: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "ပရိုမိုးရှင်း လျှော့ငွေ",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  controller.promotionType.value!.fold(
+                                      (l) => '',
+                                      (r) => r.map(
+                                            nothing: (_) => "",
+                                            money: (_) =>
+                                                "-${controller.promotionObxValue} ကျပ်",
+                                            percentage: (_) =>
+                                                "-${controller.promotionObxValue} %",
+                                          )),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      }),
+                      Obx(() {
+                        final hasError =
+                            controller.firstTimePressedCart.value &&
+                                controller.townShipNameAndFee.isEmpty;
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: hasError
+                                  ? Colors.red
+                                  : Colors.white.withOpacity(0),
+                            ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              //DropDown TownShip List
-                              Container(
-                                width: 280,
-                                height: 50,
-                                child: GetBuilder<HomeController>(
-                                    builder: (controller) {
-                                  return InkWell(
-                                    onTap: () {
-                                      //Show Dialog
-                                      showDialog(
-                                          barrierColor:
-                                              Colors.white.withOpacity(0),
-                                          context: context,
-                                          builder: (context) {
-                                            return divisionDialogWidget();
-                                          });
-                                    },
-                                    child: Container(
-                                      child: Row(children: [
-                                        //Township Name
-                                        Expanded(
-                                          child: Text(
-                                            controller.townShipNameAndFee[
-                                                    "townName"] ??
-                                                "မြို့နယ်",
-                                            maxLines: 1,
-                                            style: TextStyle(fontSize: 13),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              left: 10,
+                              right: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                //DropDown TownShip List
+                                Container(
+                                  width: 280,
+                                  height: 50,
+                                  child: GetBuilder<HomeController>(
+                                      builder: (controller) {
+                                    return InkWell(
+                                      onTap: () {
+                                        //Show Dialog
+                                        showDialog(
+                                            barrierColor:
+                                                Colors.white.withOpacity(0),
+                                            context: context,
+                                            builder: (context) {
+                                              return divisionDialogWidget();
+                                            });
+                                      },
+                                      child: Container(
+                                        child: Row(children: [
+                                          //Township Name
+                                          Expanded(
+                                            child: Text(
+                                              controller.townShipNameAndFee[
+                                                      "townName"] ??
+                                                  "မြို့နယ်",
+                                              maxLines: 1,
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ),
+                                          //DropDown Icon
+                                          Expanded(
+                                              child: Icon(
+                                                  FontAwesomeIcons.angleRight)),
+                                        ]),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Expanded(
+                                  child: GetBuilder<HomeController>(
+                                      builder: (controller) {
+                                    return Row(
+                                      children: [
+                                        Text(
+                                          controller.townShipNameAndFee.isEmpty
+                                              ? "0 ကျပ်"
+                                              : " ${controller.townShipNameAndFee["fee"]} ကျပ်",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
                                           ),
                                         ),
-                                        //DropDown Icon
-                                        Expanded(
-                                            child: Icon(
-                                                FontAwesomeIcons.angleRight)),
-                                      ]),
-                                    ),
-                                  );
-                                }),
-                              ),
-                              Expanded(
-                                child: GetBuilder<HomeController>(
-                                    builder: (controller) {
-                                  return Row(
-                                    children: [
-                                      Text(
-                                        controller.townShipNameAndFee.isEmpty
-                                            ? "0 ကျပ်"
-                                            : " ${controller.townShipNameAndFee["fee"]} ကျပ်",
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                    Container(
-                      width: double.infinity,
-                      height: 40,
-                      margin: EdgeInsets.only(
-                        left: 10,
-                        top: 10,
-                        right: 10,
-                      ),
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(25, 25, 25, 1),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "စုစုပေါင်း ကျသင့်ငွေ   =  ",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                                      ],
+                                    );
+                                  }),
+                                ),
+                              ],
                             ),
                           ),
-                          GetBuilder<HomeController>(builder: (controller) {
-                            final subTotalWithPromotion =
-                                controller.promotionType.value!.fold(
-                              (r) => 0,
-                              (l) => l.map(
-                                nothing: (_) => controller.subTotal,
-                                money: (_) =>
-                                    controller.subTotal -
-                                    controller.promotionObxValue.value,
-                                percentage: (_) =>
-                                    controller.subTotal -
-                                    ((controller.subTotal / 100) *
-                                        controller.promotionObxValue.value),
-                              ),
-                            );
-                            return Text(
-                              controller.townShipNameAndFee.isEmpty
-                                  ? "$subTotalWithPromotion"
-                                  : "${subTotalWithPromotion + controller.townShipNameAndFee["fee"]} ကျပ်",
+                        );
+                      }),
+                      Container(
+                        width: double.infinity,
+                        height: 40,
+                        margin: EdgeInsets.only(
+                          left: 10,
+                          top: 10,
+                          right: 10,
+                        ),
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(25, 25, 25, 1),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "စုစုပေါင်း ကျသင့်ငွေ   =  ",
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                            );
-                          }),
-                        ],
+                            ),
+                            GetBuilder<HomeController>(builder: (controller) {
+                              final subTotalWithPromotion =
+                                  controller.promotionType.value!.fold(
+                                (r) => 0,
+                                (l) => l.map(
+                                  nothing: (_) => controller.subTotal,
+                                  money: (_) =>
+                                      controller.subTotal -
+                                      controller.promotionObxValue.value,
+                                  percentage: (_) =>
+                                      controller.subTotal -
+                                      ((controller.subTotal / 100) *
+                                          controller.promotionObxValue.value),
+                                ),
+                              );
+                              return Text(
+                                controller.townShipNameAndFee.isEmpty
+                                    ? "$subTotalWithPromotion"
+                                    : "${subTotalWithPromotion + controller.townShipNameAndFee["fee"]} ကျပ်",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -345,7 +348,7 @@ class CartView extends StatelessWidget {
             margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
             child: ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colours.goldenRod),
+                backgroundColor: MaterialStateProperty.all(Colors.black),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
               ),
               onPressed: () {

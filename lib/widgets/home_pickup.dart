@@ -25,7 +25,7 @@ class HomePickUp extends StatelessWidget {
             ),
             child: GFCarousel(
               scrollPhysics: const BouncingScrollPhysics(),
-              aspectRatio: isTablet ? 16/8 : 16 / 9,
+              aspectRatio: isTablet ? 16 / 8 : 16 / 9,
               autoPlay: true,
               viewportFraction: 1.0,
               hasPagination: true,
@@ -38,26 +38,26 @@ class HomePickUp extends StatelessWidget {
                     Align(
                       alignment: Alignment.center,
                       child: CachedNetworkImage(
-                            progressIndicatorBuilder: (context, url, status) {
-                              return Shimmer.fromColors(
-                                child: Container(
-                                  color: Colors.white,
-                                ),
-                                baseColor: Colors.grey.shade300,
-                                highlightColor: Colors.white,
-                              );
-                            },
-                            errorWidget: (context, url, whatever) {
-                              return const Text("Image not available");
-                            },
-                            imageUrl: advertisement.image,
-                            fit: BoxFit.contain,
-                            height: isTablet ? 400:200,
-                            width: width,
-                          ),
+                        progressIndicatorBuilder: (context, url, status) {
+                          return Shimmer.fromColors(
+                            child: Container(
+                              color: Colors.white,
+                            ),
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.white,
+                          );
+                        },
+                        errorWidget: (context, url, whatever) {
+                          return const Text("Image not available");
+                        },
+                        imageUrl: advertisement.image,
+                        fit: BoxFit.contain,
+                        height: isTablet ? 400 : 200,
+                        width: width,
+                      ),
                     ),
-                        //Shop Button
-                        Align(
+                    //Shop Button
+                    /*     Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             color: Colors.black.withOpacity(0.6),
@@ -93,6 +93,7 @@ class HomePickUp extends StatelessWidget {
                             ),
                           ),
                         ),
+                   */
                   ],
                 );
               }).toList(),

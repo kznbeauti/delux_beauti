@@ -48,7 +48,7 @@ class _LoginUser extends StatelessWidget {
                       bottom: 20,
                     ),
                     child: Image.asset(
-                      "assets/logo.png",
+                      "assets/applogo.png",
                       width: 100,
                       height: 100,
                     ),
@@ -119,7 +119,81 @@ class _LoginUser extends StatelessWidget {
               ),
             ),
           ),
-
+          //Return
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(returnPolicyUrl);
+            },
+            child: Container(
+              height: 60,
+              margin: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Return Policy"),
+                      Icon(FontAwesomeIcons.exclamationCircle),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          //Privacy Policy
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(privacyPolicyUrl);
+            },
+            child: Container(
+              height: 60,
+              margin: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Privacy and Policy"),
+                      Icon(FontAwesomeIcons.exclamationCircle),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          //TNC
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(tncRouteUrl);
+            },
+            child: Container(
+              height: 60,
+              margin: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Terms and Conditions"),
+                      Icon(FontAwesomeIcons.exclamationCircle),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
 
           //Logout And Delete Buttons
@@ -524,7 +598,7 @@ class LoginScreen extends StatelessWidget {
                       Radius.circular(10),
                     ),
                     child: Image.asset(
-                      "assets/logo.png",
+                      "assets/applogo.png",
                       width: Get.width / 3,
                     ),
                   ),

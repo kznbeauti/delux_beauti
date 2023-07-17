@@ -12,8 +12,7 @@ class Shop extends StatefulWidget {
   _ShopState createState() => _ShopState();
 }
 
-class _ShopState extends State<Shop>
-    with SingleTickerProviderStateMixin {
+class _ShopState extends State<Shop> with SingleTickerProviderStateMixin {
   final colorstheme = Color(0xff4b4b87);
 
   late TabController _tabController;
@@ -57,7 +56,6 @@ class CardWidget extends StatelessWidget {
     {"color": Color(0xff2ac3ff)},
     {"color": Color(0xff5a65ff)},
     {"color": Color(0xff96da45)},
-
   ];
 
   final colorwhite = Colors.white;
@@ -79,17 +77,17 @@ class CardWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           final cate = _controller.categories[index];
           return InkWell(
-            onTap: (){
-              _controller.setViewAllProducts(
-                                                    ViewAllModel(
-                                                      status: "${cate.name} Products", 
-                                                      products: _controller.items.where((e) => e.category == cate.name).toList(),
-                                                    )
-                                                  );
-                                                  Get.toNamed(viewAllUrl);
+            onTap: () {
+              _controller.setViewAllProducts(ViewAllModel(
+                status: "${cate.name} Products",
+                products: _controller.items
+                    .where((e) => e.category.contains(cate.name))
+                    .toList(),
+              ));
+              Get.toNamed(viewAllUrl);
             },
             child: Padding(
-              padding: const EdgeInsets.only(left: 5,right: 5),
+              padding: const EdgeInsets.only(left: 5, right: 5),
               child: Card(
                 elevation: 10,
                 color: Colors.white,
@@ -97,43 +95,48 @@ class CardWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 child: Padding(
                   padding: const EdgeInsets.all(0.0),
-                  child: Column(
-                    children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: SizedBox(
-                          height: 50,
-
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20, top: 10),
-
-                                child: Text(
-                                  cate.name,
-                                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 20, top: 10),
+                                  child: Text(
+                                    cate.name,
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 18),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                          alignment: Alignment.bottomRight,
-                          padding: EdgeInsets.only(right:10),
-                          child: Column(
-                            children: [
-                            cate.image!.isNotEmpty ?
-                            CachedNetworkImage(
-                            imageUrl: cate.image!,
-                            width: 70,
-                            height: 70,
-                            fit: BoxFit.fitWidth,
-                          ) : const SizedBox(),
-                            ],
-                          ))
-                    ],
+                        Container(
+                            alignment: Alignment.bottomRight,
+                            padding: EdgeInsets.only(right: 10),
+                            child: Column(
+                              children: [
+                                cate.image!.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: cate.image!,
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.fitWidth,
+                                      )
+                                    : const SizedBox(),
+                              ],
+                            ))
+                      ],
+                    ),
                   ),
                 ),
               ),

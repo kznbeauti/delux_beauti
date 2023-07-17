@@ -130,7 +130,7 @@ class _PromotionManagerState extends State<PromotionManager> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "Value: __ks (or) __%",
+                      "Value: __Ks (or) __%",
                       style: TextStyle(
                         fontSize: 18,
                       ),

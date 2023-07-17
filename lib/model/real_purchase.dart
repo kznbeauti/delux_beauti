@@ -21,6 +21,21 @@ class PurchaseModel with _$PurchaseModel {
     @JsonKey(nullable: true) String? bankSlipImage,
     required String dateTime,
   }) = _PurchaseModel;
-  factory PurchaseModel.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseModelFromJson(json);
+  factory PurchaseModel.fromJson(Map<String, dynamic> json) => PurchaseModel(
+        id: json['id'] as String,
+        items: (json['items'] as List<dynamic>)
+            .map((e) => PurchaseItem.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        name: json['name'] as String,
+        email: json['email'] as String,
+        phone: json['phone'] as String,
+        address: json['address'] as String,
+        total: json['total'] as int,
+        promotionValue: json['promotionValue'] is int
+            ? json['promotionValue'].toString()
+            : json['promotionValue'] as String,
+        deliveryTownshipInfo: json['deliveryTownshipInfo'] as List<dynamic>,
+        bankSlipImage: json['bankSlipImage'] as String?,
+        dateTime: json['dateTime'] as String,
+      );
 }

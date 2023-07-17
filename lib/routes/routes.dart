@@ -24,7 +24,10 @@ import 'package:kozarni_ecome/screen/view_all/view/view_all.dart';
 
 import '../intro_screen.dart';
 import '../screen/pos_inventory/inventory_management.dart';
+import '../screen/privacy-policy.dart';
 import '../screen/promotion/view/promotion_view.dart';
+import '../screen/return_policy.dart';
+import '../screen/tnc_route.dart';
 
 const String introScreen = '/intro-screen';
 const String homeScreen = '/home';
@@ -47,12 +50,27 @@ const String promotionUrl = '/promotions';
 const String divisionUrl = "/divisions";
 const inventoryUrl = "/inventory_url";
 const brandManagementUrl = "/brand_managment";
+const privacyPolicyUrl = "/privacy_policy_url";
+const returnPolicyUrl = "/return_policy_url";
+const tncRouteUrl = "/tnc_route_url";
 
 List<GetPage> routes = [
   // GetPage(
   //   name: introScreen,
   //   page: () => OnBoardingPage(),
   // ),
+  GetPage(
+    name: privacyPolicyUrl,
+    page: () => PrivacyPolicyRoute(),
+  ),
+  GetPage(
+    name: returnPolicyUrl,
+    page: () => AboutRoute(),
+  ),
+  GetPage(
+    name: tncRouteUrl,
+    page: () => TnCRoute(),
+  ),
   GetPage(
     name: homeScreen,
     page: () => HomeScreen(),
