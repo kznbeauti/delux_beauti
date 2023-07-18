@@ -135,8 +135,8 @@ class RewardProductWidget extends StatelessWidget {
                                 } else {
                                   debugPrint(
                                       "*****Add to cart reward product**");
-                                  if (!((_homeController.myCartMap
-                                      .containsKey(product.id)))) {
+                                  if (!(_homeController.myCartMap
+                                      .containsKey(product.id))) {
                                     _homeController.addToCart(product,
                                         price: product.price);
                                   }

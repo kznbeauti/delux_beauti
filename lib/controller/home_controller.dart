@@ -246,7 +246,6 @@ class HomeController extends GetxController {
 
   void addToCart(Product product,
       {String? color, List<String>? size, required int price}) {
-    log("********current user point inside addToCart: $price*******");
     if (product.requirePoint! > 0 && isCanAdd(product.requirePoint!)) {
       currentUserPoint = currentUserPoint - (product.requirePoint! * 1);
     } else if (product.requirePoint! > 0 && !isCanAdd(product.requirePoint!)) {
@@ -272,7 +271,6 @@ class HomeController extends GetxController {
         return element;
       }).toList();
     } catch (e) {
-      log("NEW PRICE: ${price}");
       myCartMap.putIfAbsent(product.id, () => 1);
       myCart.add(//-----For new product that doesn't already exist before----//
           PurchaseItem(
@@ -373,10 +371,19 @@ class HomeController extends GetxController {
       if (element.id == p.id &&
           element.color == p.color &&
           element.size == p.size) {
-        if (element.requirePoint! > 0) {
+        //if point product
+        var checkUserPoint = currentUserPoint - (element.requirePoint! * 1);
+        /* if (element.requirePoint! > 0 && checkUserPoint > 0) {
           currentUserPoint = currentUserPoint - (element.requirePoint! * 1);
+        } */
+        if (element.requirePoint! > 0 && isCanAdd(element.requirePoint!)) {
+          currentUserPoint = currentUserPoint - (element.requirePoint! * 1);
+          return element.copyWith(count: element.count + 1);
+        } else if (element.requirePoint! > 0 &&
+            !isCanAdd(element.requirePoint!)) {
+          showNotEnoughPoint();
+          return element;
         }
-        return element.copyWith(count: element.count + 1);
       }
       return element;
     }).toList();
@@ -387,12 +394,16 @@ class HomeController extends GetxController {
   void remove(PurchaseItem p) {
     bool needToRemove = false;
     myCart.value = myCart.map((element) {
+      //found same item
       if (element.id == p.id &&
           element.color == p.color &&
           element.size == p.size) {
         if (element.count > 1) {
+          //not need to remove
           if (element.requirePoint! > 0) {
-            currentUserPoint = currentUserPoint + (element.requirePoint! * 1);
+            //if reward product
+            currentUserPoint = currentUserPoint + element.requirePoint!;
+            log("Reduce rewardproduct: userpoint:$currentUserPoint");
           }
           return element.copyWith(count: element.count - 1);
         }
@@ -402,6 +413,12 @@ class HomeController extends GetxController {
       return element;
     }).toList();
     if (needToRemove) {
+      //if need to remove,we need to do user point logic
+      if (p.requirePoint! > 0) {
+        //if reward product
+        currentUserPoint = currentUserPoint + p.requirePoint!;
+        log("Reduce rewardproduct: userpoint:$currentUserPoint");
+      }
       myCartMap.remove(p.id);
       myCart.removeWhere((element) =>
           element.id == p.id &&
@@ -578,6 +595,7 @@ class HomeController extends GetxController {
         log("Purchase Error: $e");
       } //submit success
       myCart.clear();
+      myCartMap.clear();
       navIndex.value = 0;
       update([myCart, navIndex]);
       myCart.clear();
@@ -1001,7 +1019,8 @@ class HomeController extends GetxController {
   int currentUserPoint = 0;
 
   bool isCanAdd(int rewardPoint) {
-    return currentUserPoint > (rewardPoint * 1);
+    log("Is Can Add: ${currentUserPoint > rewardPoint}:\nuserpoint:$currentUserPoint\nrequirepoint:$rewardPoint");
+    return currentUserPoint >= rewardPoint;
   }
 
   bool isContainRewardProductInCart(Product p) {
