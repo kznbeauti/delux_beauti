@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/model/product.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 
 import '../data/constant.dart';
 import '../routes/routes.dart';
@@ -14,6 +15,7 @@ class RewardProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final HomeController _homeController = Get.find();
     return InkWell(
       onTap: () {
@@ -23,6 +25,9 @@ class RewardProductWidget extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: 100,
+          maxWidth: ResponsiveWrapper.of(context).isLargerThan(MOBILE)
+              ? size.width * 0.35
+              : size.width * 0.5,
         ),
         child: Card(
           elevation: 5,

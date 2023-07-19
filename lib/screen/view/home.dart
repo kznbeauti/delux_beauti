@@ -14,6 +14,7 @@ import 'package:kozarni_ecome/widgets/home_pickup.dart';
 import 'package:kozarni_ecome/widgets/home_pickup_two.dart';
 import 'package:kozarni_ecome/widgets/normal_product_widget.dart';
 import 'package:kozarni_ecome/widgets/reward_product_widget.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeView extends StatelessWidget {
@@ -125,6 +126,7 @@ class HomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: controller.brandList.length,
                   shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     final brand = controller.brandList[index];
                     return InkWell(
@@ -209,12 +211,16 @@ class HomeView extends StatelessWidget {
                                     );
                             }),
                             getAccurateWidget(
-                                controller: controller, index: index),
+                                context: context,
+                                controller: controller,
+                                index: index),
                           ],
                         );
                       } else {
                         return getAccurateWidget(
-                            controller: controller, index: index);
+                            context: context,
+                            controller: controller,
+                            index: index);
                       }
                     },
                   )

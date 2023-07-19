@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 
 import '../model/view_all_model.dart';
 import '../widgets/normal_product_widget.dart';
@@ -10,6 +11,7 @@ import '../widgets/reward_product_widget.dart';
 Widget getAccurateWidget({
   required HomeController controller,
   required int index,
+  required BuildContext context,
 }) {
   final sta = controller.statusList[index];
   final products =
@@ -21,7 +23,9 @@ Widget getAccurateWidget({
       //or not.
       //OTHER WIDGET
       return AspectRatio(
-        aspectRatio: 16 / 13,
+        aspectRatio: ResponsiveWrapper.of(context).isLargerThan(MOBILE)
+            ? 16 / 10
+            : 16 / 13,
         child: Padding(
           padding: const EdgeInsets.only(
             top: 20,
@@ -88,7 +92,9 @@ Widget getAccurateWidget({
     } else {
       //REWARD WIDGET
       return AspectRatio(
-        aspectRatio: 16 / 13,
+        aspectRatio: ResponsiveWrapper.of(context).isLargerThan(MOBILE)
+            ? 16 / 10
+            : 16 / 13,
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(

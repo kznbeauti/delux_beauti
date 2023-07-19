@@ -25,7 +25,7 @@ class HomePickUp extends StatelessWidget {
             ),
             child: GFCarousel(
               scrollPhysics: const BouncingScrollPhysics(),
-              aspectRatio: isTablet ? 16 / 8 : 16 / 9,
+              aspectRatio: 16 / 9,
               autoPlay: true,
               viewportFraction: 1.0,
               hasPagination: true,
@@ -33,68 +33,21 @@ class HomePickUp extends StatelessWidget {
               passiveIndicator: Colors.grey,
               autoPlayInterval: const Duration(seconds: 6),
               items: controller.advertisementList.map((advertisement) {
-                return Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: CachedNetworkImage(
-                        progressIndicatorBuilder: (context, url, status) {
-                          return Shimmer.fromColors(
-                            child: Container(
-                              color: Colors.white,
-                            ),
-                            baseColor: Colors.grey.shade300,
-                            highlightColor: Colors.white,
-                          );
-                        },
-                        errorWidget: (context, url, whatever) {
-                          return const Text("Image not available");
-                        },
-                        imageUrl: advertisement.image,
-                        fit: BoxFit.contain,
-                        height: isTablet ? 400 : 200,
-                        width: width,
+                return CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, status) {
+                    return Shimmer.fromColors(
+                      child: Container(
+                        color: Colors.white,
                       ),
-                    ),
-                    //Shop Button
-                    /*     Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            color: Colors.black.withOpacity(0.6),
-                            height: 90,
-                            width: double.infinity,
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                //Description
-                                Text(advertisement.description,style: 
-                                TextStyle(
-                                  color: Colors.white,
-                                ),),
-                                //Shop text button
-                                TextButton(
-                                  onPressed: (){
-                                    controller.setViewAllProducts(
-                                                    ViewAllModel(status: advertisement.description, 
-                                                    products: controller.getAdvertisementsProductList(advertisement.products),
-                                                  )
-                                                  );
-                                                  Get.toNamed(viewAllUrl);
-                                  }, 
-                                  child: Text("Show Now>",style: 
-                                TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                   */
-                  ],
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.white,
+                    );
+                  },
+                  errorWidget: (context, url, whatever) {
+                    return const Text("Image not available");
+                  },
+                  imageUrl: advertisement.image,
+                  fit: BoxFit.contain,
                 );
               }).toList(),
             ),

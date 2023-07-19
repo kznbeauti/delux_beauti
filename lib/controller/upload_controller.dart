@@ -183,7 +183,7 @@ class UploadController extends GetxController {
     showLoading();
     try {
       if (form.currentState?.validate() == true &&
-          _homeController.category.isNotEmpty &&
+          selectedCategories.isNotEmpty &&
           status.isNotEmpty &&
           selectedBrandId.value.isNotEmpty) {
         final DateTime dateTime = DateTime.now();
