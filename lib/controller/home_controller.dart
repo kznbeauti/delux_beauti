@@ -313,6 +313,7 @@ class HomeController extends GetxController {
   final Rxn<Product?> editItem = Rxn<Product?>(null);
   void setEditItem(Product? product) {
     editItem.value = product;
+    log("Edit Item's Id: ${product?.id} Brand name: ${product?.brandName}");
   }
 
   Product? getItem(String id) {

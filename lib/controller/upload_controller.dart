@@ -186,6 +186,9 @@ class UploadController extends GetxController {
           selectedCategories.isNotEmpty &&
           status.isNotEmpty &&
           selectedBrandId.value.isNotEmpty) {
+        final brandName = _homeController.brandList
+            .firstWhere((element) => element.id == selectedBrandId.value)
+            .name;
         final DateTime dateTime = DateTime.now();
         if (_homeController.editItem.value != null) {
           //For Update
@@ -211,6 +214,7 @@ class UploadController extends GetxController {
                   category: selectedCategories,
                   tags: tagsMap.values.map((e) => e).toList(),
                   brandID: selectedBrandId.value,
+                  brandName: brandName,
                   originalPrice: int.tryParse(originalPrice.text) ?? 0,
                   originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
                   remainQuantity: int.tryParse(remainQuantity.text) ?? 0,
@@ -240,6 +244,7 @@ class UploadController extends GetxController {
               category: selectedCategories,
               tags: tagsMap.values.map((e) => e).toList(),
               brandID: selectedBrandId.value,
+              brandName: brandName,
               dateTime: DateTime.now(),
               originalPrice: int.tryParse(originalPrice.text) ?? 0,
               originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
