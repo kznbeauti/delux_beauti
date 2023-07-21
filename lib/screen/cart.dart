@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'dart:developer' as developer;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
@@ -162,6 +164,8 @@ class CartView extends StatelessWidget {
                         ),
                       ),
                       Obx(() {
+                        developer.log(
+                            "=====Need to buy more: ${controller.needToBuyMore.value}");
                         if (controller.promotionObxValue.value > 0) {
                           return Padding(
                             padding: const EdgeInsets.only(
@@ -195,6 +199,22 @@ class CartView extends StatelessWidget {
                                   ),
                                 ),
                               ],
+                            ),
+                          );
+                        } else if (controller.promotionObxValue.value == 0 &&
+                            controller.needToBuyMore.value) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              left: 10,
+                              right: 10,
+                            ),
+                            child: Text(
+                              "ပရိုမိုးရှင်းလျှော့ငွေရရန် ${controller.restrictedAmount.value}Ks ဝယ်ယူပါ။",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           );
                         } else {
@@ -502,13 +522,6 @@ class AddPromotionWidget extends StatefulWidget {
 }
 
 class _AddPromotionWidgetState extends State<AddPromotionWidget> {
-  TextEditingController _proCodeController = TextEditingController();
-  @override
-  void dispose() {
-    _proCodeController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
@@ -524,11 +537,9 @@ class _AddPromotionWidgetState extends State<AddPromotionWidget> {
               child: SizedBox(
                 height: 65,
                 child: TextFormField(
-                  controller: _proCodeController,
-                  onChanged: (value) =>
-                      controller.updateSubTotal(true, promotionValue: value),
-                  onFieldSubmitted: (value) =>
-                      controller.updateSubTotal(true, promotionValue: value),
+                  controller: controller.proCodeController,
+                  onChanged: (value) => controller.updateSubTotal(true),
+                  onFieldSubmitted: (value) => controller.updateSubTotal(true),
                   decoration: InputDecoration(
                     hintText: "Add a promo code",
                     border: OutlineInputBorder(

@@ -9,6 +9,7 @@ class Promotion with _$Promotion {
     required String id,
     required String code,
     required String promotionValue,
+    required int restrictValue,
     required DateTime dateTime,
   }) = _Promotion;
 

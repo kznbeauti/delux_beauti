@@ -43,6 +43,7 @@ class HomeController extends GetxController {
   final Database _database = Database();
   final Api _api = Api();
   final ImagePicker _imagePicker = ImagePicker();
+  TextEditingController proCodeController = TextEditingController();
   Rxn<AuthUser?> currentUser = Rxn<AuthUser?>(null);
 ///////////////////////////For View All Screen////////////////////////////////
   ViewAllModel viewAllModel = ViewAllModel.empty();
@@ -384,6 +385,7 @@ class HomeController extends GetxController {
           showNotEnoughPoint();
           return element;
         }
+        return element.copyWith(count: element.count + 1);
       }
       return element;
     }).toList();
@@ -429,12 +431,13 @@ class HomeController extends GetxController {
   }
 
   int subTotal = 0;
+  var needToBuyMore = false.obs;
+  var restrictedAmount = 0.obs;
   Rxn<Either<None, PromotionType>> promotionType =
       Rxn<Either<None, PromotionType>>(right(PromotionType.nothing()));
   var promotionObxValue = 0.obs;
-  void updateSubTotal(bool isUpdate, {String? promotionValue = ""}) {
-    log("*********PromotionCode: $promotionValue");
-    try {
+  void updateSubTotal(bool isUpdate) {
+    /* try {
       final pro = promotionList
           .where((e) => e.code == promotionValue)
           .first
@@ -451,7 +454,7 @@ class HomeController extends GetxController {
     } catch (e) {
       promotionObxValue.value = 0;
       promotionType.value = right(PromotionType.nothing());
-    }
+    } */
     // promotionObxValue.value = promotionValue!.isEmpty ? 0 :
     // promotionList.where((e) => e.id == promotionValue).first.promotionValue;
     if (subTotal != 0) {
@@ -469,6 +472,33 @@ class HomeController extends GetxController {
     }
     subTotal = price;
     log("*************$subTotal");
+    try {
+      final promotion =
+          promotionList.where((e) => e.code == proCodeController.text).first;
+      final pro = promotion.promotionValue;
+      final restrictedValue = promotion.restrictValue;
+      restrictedAmount.value = restrictedValue;
+      //we check this is percentage or money
+      if (subTotal >= restrictedValue) {
+        needToBuyMore.value = false;
+        if (pro.contains("%")) {
+          //this is percentage
+          promotionObxValue.value = int.tryParse(pro.split("%").first) ?? 0;
+          promotionType.value = right(PromotionType.percentage());
+        } else {
+          promotionObxValue.value = int.tryParse(pro.split("Ks").first) ?? 0;
+          promotionType.value = right(PromotionType.money());
+        }
+      } else {
+        needToBuyMore.value = true;
+        promotionObxValue.value = 0;
+        promotionType.value = right(PromotionType.nothing());
+      }
+    } catch (e) {
+      needToBuyMore.value = false;
+      promotionObxValue.value = 0;
+      promotionType.value = right(PromotionType.nothing());
+    }
     if (isUpdate) {
       update();
     }
@@ -597,6 +627,9 @@ class HomeController extends GetxController {
       myCart.clear();
       myCartMap.clear();
       navIndex.value = 0;
+      needToBuyMore.value = false;
+      promotionObxValue.value = 0;
+      updateSubTotal(false);
       update([myCart, navIndex]);
       myCart.clear();
     } catch (e) {

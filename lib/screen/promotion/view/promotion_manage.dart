@@ -31,6 +31,8 @@ class _PromotionManagerState extends State<PromotionManager> {
       "code": TextEditingController()..text = widget.promotion?.code ?? "",
       "promotionValue": TextEditingController()
         ..text = "${widget.promotion?.promotionValue ?? ""}",
+      "restrictedValue": TextEditingController()
+        ..text = "${widget.promotion?.restrictValue ?? 0}",
     });
     super.initState();
   }
@@ -75,6 +77,9 @@ class _PromotionManagerState extends State<PromotionManager> {
                   promotionValue:
                       input.input["promotionValue"]?.value.text ?? "0",
                   id: widget.promotion?.id ?? Uuid().v1(),
+                  restrictValue: int.tryParse(
+                          input.input["restrictedValue"]?.value.text ?? "") ??
+                      0,
                   dateTime: DateTime.now(),
                 ),
               ),
@@ -142,6 +147,36 @@ class _PromotionManagerState extends State<PromotionManager> {
                     validator: input.validateInput,
                     decoration: InputDecoration(
                       hintText: "100ks (or) 1%",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            //Restrict Value
+            Container(
+              height: 100,
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Hint Text
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Restricted amount",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: input.input["restrictedValue"],
+                    /*  keyboardType: TextInputType., */
+                    validator: input.validateInput,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "100000",
                       border: OutlineInputBorder(),
                     ),
                   ),
