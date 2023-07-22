@@ -26,6 +26,20 @@ Widget purchaseDialogBox({
       : int.tryParse(purchaseModel.promotionValue) ?? 0;
   return Column(
     children: [
+      //Order Id
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Text("Purchase Date"),
+          Text(
+            "Order ID - ${purchaseModel.id}",
+            style: responsiveFontSize14,
+          ),
+        ],
+      ),
+      SizedBox(
+        height: 15,
+      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -116,36 +130,31 @@ Widget purchaseDialogBox({
                       width: 25,
                     ),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Wrap(
                         children: [
-                          Text(
-                            "${purchase.color}",
-                            style: TextStyle(fontSize: 10),
-                          ),
                           Text(
                             "${purchase.size}",
                             style: TextStyle(fontSize: 10),
-                          )
+                          ),
+                          if (purchase.discountPrice! > 0) ...[
+                            Text(
+                              "${purchase.discountPrice} x  ${purchase.count} ထည်",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ] else if (purchase.requirePoint! > 0) ...[
+                            Text(
+                              "${purchase.requirePoint} x  ${purchase.count} ထည်",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ] else ...[
+                            Text(
+                              "${purchase.price} x  ${purchase.count} ထည်",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                    if (purchase.discountPrice! > 0) ...[
-                      Text(
-                        "${purchase.discountPrice} x  ${purchase.count} ထည်",
-                        style: TextStyle(fontSize: 10),
-                      ),
-                    ] else if (purchase.requirePoint! > 0) ...[
-                      Text(
-                        "${purchase.requirePoint} x  ${purchase.count} ထည်",
-                        style: TextStyle(fontSize: 10),
-                      ),
-                    ] else ...[
-                      Text(
-                        "${purchase.price} x  ${purchase.count} ထည်",
-                        style: TextStyle(fontSize: 10),
-                      ),
-                    ],
                   ],
                 ),
               );
@@ -178,9 +187,11 @@ Widget purchaseDialogBox({
             style: responsiveFontSize14,
           ),
           //SizedBox(width: 10),
-          Text(
-            township,
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          Expanded(
+            child: Text(
+              township,
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

@@ -135,6 +135,7 @@ class DetailScreen extends StatelessWidget {
                   height: 10,
                 ),
                 Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -144,13 +145,16 @@ class DetailScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 16),
                       ),
+                      const SizedBox(width: 20),
                       //Star
-                      Text(
-                        currentProduct.name,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          currentProduct.name,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
                       ),
                       //Favourite Icon
                     ]),
