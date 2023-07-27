@@ -356,8 +356,15 @@ class HomeController extends GetxController {
 
   // List<ItemModel> pickUp() =>
   //     items.where((e) => e.category == 'New Products').toList();
-
-  List<Product> hot() => items.where((e) => e.category == hotSale).toList();
+  RxList<Product> hotSalesProducts = <Product>[].obs;
+  /*  List<Product> hot() {
+    return items
+        .where((e) => e.category
+            .map((e) => e.removeAllWhitespace)
+            .toList()
+            .contains(hotSale))
+        .toList();
+  } */
 
   void removeItem(String id) => items.removeWhere((item) => item.id == id);
 
@@ -778,6 +785,15 @@ class HomeController extends GetxController {
     } // SharedPreference to Stroe
     _database.watch(itemCollection).listen((event) {
       items.value = event.docs.map((e) => Product.fromJson(e.data())).toList();
+      for (var element in items) {
+        if (hotSalesProducts.where((e) => e.id == element.id).isNotEmpty) {
+          hotSalesProducts.removeWhere((e) => e.id == element.id);
+        }
+        if (element.category.contains(hotSale)) {
+          log("=======contain hot sales");
+          hotSalesProducts.add(element);
+        }
+      }
       refreshTotalProductAndRemainProduct();
     });
     //Listening Division List
