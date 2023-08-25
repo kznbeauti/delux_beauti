@@ -22,6 +22,10 @@ class Database {
           .orderBy("dateTime", descending: true)
           .snapshots();
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchWithAlphabet(
+          String collectionPath) =>
+      _firebaseFirestore.collection(collectionPath).orderBy("name").snapshots();
+
   Stream<QuerySnapshot<Map<String, dynamic>>> watchOrder(
           String collectionPath) =>
       _firebaseFirestore

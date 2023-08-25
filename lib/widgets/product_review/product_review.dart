@@ -89,7 +89,7 @@ class ProductReviewWidget extends StatelessWidget {
               }) */
               , */
           Text(
-            "(${product.reviewCount} Reviews)",
+            "(${product.reviewCount?.round()} Reviews)",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,
@@ -109,10 +109,12 @@ class ProductReviewWidget extends StatelessWidget {
 
               return UserReviewWidget(review: review, size: size);
             },
-            loadingBuilder: (context) => const SizedBox(
-              height: 50,
-              width: 50,
-              child: CircularProgressIndicator(),
+            loadingBuilder: (context) => Center(
+              child: const SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(),
+              ),
             ),
             errorBuilder: (context, error, stackTrace) => const SizedBox(
               height: 50,

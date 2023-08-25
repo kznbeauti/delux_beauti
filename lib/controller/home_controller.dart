@@ -837,7 +837,7 @@ class HomeController extends GetxController {
       }
     });
     //brand
-    _database.watch(brandCollection).listen((event) {
+    _database.watchWithAlphabet(brandCollection).listen((event) {
       if (event.docs.isEmpty) {
         brandList.clear();
       } else {
