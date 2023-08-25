@@ -209,7 +209,7 @@ class ProductReviewWidget extends StatelessWidget {
                           ),
                         )),
                     onPressed: () {
-                      if (homeController.currentUser.value!.status! == 0) {
+                      if (homeController.currentUser.value == null) {
                         Get.snackbar("", "Login to review product.");
                         return;
                       }
