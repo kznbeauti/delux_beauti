@@ -34,6 +34,8 @@ class UploadController extends GetxController {
   TextEditingController originalPrice = TextEditingController();
   TextEditingController originalQuantity = TextEditingController();
   TextEditingController remainQuantity = TextEditingController();
+  TextEditingController ingredientController = TextEditingController();
+  TextEditingController howToUseController = TextEditingController();
 
   String advertisementID = "";
   var status = "".obs;
@@ -86,6 +88,8 @@ class UploadController extends GetxController {
       colorController.text = editItem.color ?? "";
       priceController.text = editItem.price.toString();
       selectedBrandId.value = editItem.brandID ?? "";
+      ingredientController.text = editItem.ingredients ?? "";
+      howToUseController.text = editItem.howToUse ?? "";
       log("Brand Id : ${editItem.brandID}");
       discountPriceController.text = editItem.discountPrice.toString();
       requirePointController.text = editItem.requirePoint.toString();
@@ -215,6 +219,8 @@ class UploadController extends GetxController {
                   tags: tagsMap.values.map((e) => e).toList(),
                   brandID: selectedBrandId.value,
                   brandName: brandName,
+                  ingredients: ingredientController.text,
+                  howToUse: howToUseController.text,
                   originalPrice: int.tryParse(originalPrice.text) ?? 0,
                   originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
                   remainQuantity: int.tryParse(remainQuantity.text) ?? 0,
@@ -246,6 +252,8 @@ class UploadController extends GetxController {
               brandID: selectedBrandId.value,
               brandName: brandName,
               dateTime: DateTime.now(),
+              ingredients: ingredientController.text,
+              howToUse: howToUseController.text,
               originalPrice: int.tryParse(originalPrice.text) ?? 0,
               originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
               remainQuantity: int.tryParse(remainQuantity.text) ?? 0,

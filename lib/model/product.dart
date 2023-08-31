@@ -33,6 +33,8 @@ class Product with _$Product {
     int? originalPrice,
     int? originalQuantity,
     int? remainQuantity,
+    @JsonKey(nullable: true) String? ingredients,
+    @JsonKey(nullable: true) String? howToUse,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -72,5 +74,7 @@ class Product with _$Product {
         originalPrice: json['originalPrice'] as int?,
         originalQuantity: json['originalQuantity'] as int?,
         remainQuantity: json['remainQuantity'] as int?,
+        ingredients: json["ingredients"] as String?,
+        howToUse: json["howToUse"] as String?,
       );
 }

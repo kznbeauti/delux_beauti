@@ -225,6 +225,52 @@ class _UploadItemState extends State<UploadItem> {
                     ),
                   ),
                 ),
+                //Ingredients
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: TextFormField(
+                    // textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    minLines: 3,
+                    maxLines: null,
+
+                    controller: controller.ingredientController,
+                    validator: (value) =>
+                        controller.validator(value: value, isOptional: false),
+                    decoration: InputDecoration(
+                      hintText: 'Ingredients',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                //How To Use
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: TextFormField(
+                    // textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    minLines: 3,
+                    maxLines: null,
+
+                    controller: controller.howToUseController,
+                    validator: (value) =>
+                        controller.validator(value: value, isOptional: false),
+                    decoration: InputDecoration(
+                      hintText: 'How to use',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
                 //Price
                 Padding(
                   padding: EdgeInsets.only(

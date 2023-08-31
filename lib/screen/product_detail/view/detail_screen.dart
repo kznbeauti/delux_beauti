@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/route_manager.dart';
 import 'package:hive/hive.dart';
@@ -10,23 +13,32 @@ import 'package:get/get.dart';
 import 'package:kozarni_ecome/expaned_widget.dart';
 import 'package:kozarni_ecome/model/hive_item.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
+import 'package:kozarni_ecome/screen/product_detail/controller/product_detail_controller.dart';
 import '../../../utils/fun.dart';
 import '../../../widgets/product_review/product_review.dart';
 import '../../home_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:kozarni_ecome/model/size.dart' as own;
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   const DetailScreen({Key? key}) : super(key: key);
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  List<bool> isOpen = [false, false, false];
+  @override
   Widget build(BuildContext context) {
     final HomeController controller = Get.find();
-    final currentProduct = controller.editItem.value;
+    final currentProduct = controller.editItem.value!;
+    final ProductDetailController pdController = Get.find();
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: detailTextBackgroundColor,
-      appBar: AppBar(
-        actions: [
+      /*  appBar: AppBar(
+        /* actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: ValueListenableBuilder(
@@ -58,18 +70,83 @@ class DetailScreen extends StatelessWidget {
               },
             ),
           ),
-        ],
+        ], */
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
+        /* title: Text(
           currentProduct!.name,
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-        ),
+        ), */
       ),
+      */
       body: ListView(
         children: [
+          //Brand Name
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child: const SizedBox()),
+              //Brand Name
+              currentProduct.brandName == null
+                  ? const SizedBox()
+                  : Center(
+                      child: Text(
+                        currentProduct.brandName ?? '',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ).withPadding(v: 5, h: 20),
+                    ),
+              Expanded(child: const SizedBox()),
+              //Favourite Icon
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: ValueListenableBuilder(
+                  valueListenable: Hive.box<HiveItem>(boxName).listenable(),
+                  builder: (context, Box<HiveItem> box, widget) {
+                    final currentObj = box.get(currentProduct!.id);
+
+                    if (!(currentObj == null)) {
+                      return IconButton(
+                          onPressed: () {
+                            box.delete(currentObj.id);
+                          },
+                          icon: Icon(
+                            FontAwesomeIcons.solidHeart,
+                            color: Colors.red,
+                            size: 25,
+                          ));
+                    }
+                    return IconButton(
+                        onPressed: () {
+                          box.put(currentProduct.id,
+                              controller.changeHiveItem(currentProduct));
+                        },
+                        icon: Icon(
+                          Icons.favorite_outline,
+                          color: Colors.red,
+                          size: 25,
+                        ));
+                  },
+                ),
+              ),
+            ],
+          ),
+          //Product Name
+          Center(
+            child: Text(
+              currentProduct.name,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ).withPadding(v: 5, h: 20),
+          ),
           Container(
             child: ClipRRect(
               borderRadius: BorderRadius.only(
@@ -126,143 +203,79 @@ class DetailScreen extends StatelessWidget {
               ),
             ),
           ),
+          //Normal Price
+          Center(
+            child: Text(
+              "${currentProduct.price} Ks",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                decoration: (!(currentProduct.discountPrice == null) &&
+                        (currentProduct.discountPrice ?? 0) > 0)
+                    ? TextDecoration.lineThrough
+                    : null,
+              ),
+            ).withPadding(v: 5, h: 20),
+          ),
+          //Discount Price
+          (!(currentProduct.discountPrice == null) &&
+                  (currentProduct.discountPrice ?? 0) > 0)
+              ? Center(
+                  child: Text(
+                    (currentProduct.discountPrice ?? 0) > 0
+                        ? "${currentProduct.discountPrice} Ks"
+                        : "no discount price",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ).withPadding(v: 5, h: 20),
+                )
+              : const SizedBox(),
+          Divider(),
+          ExpansionPanelList(
+            elevation: 0,
+            children: [
+              ExpansionPanel(
+                isExpanded: isOpen[0],
+                headerBuilder: (context, value) {
+                  return Text("About Product").withPadding(v: 5, h: 10);
+                },
+                body: Text(currentProduct.description).withPadding(v: 0, h: 10),
+              ),
+              ExpansionPanel(
+                isExpanded: isOpen[1],
+                headerBuilder: (context, value) {
+                  return Text("Ingredients").withPadding(v: 5, h: 10);
+                },
+                body: Text(currentProduct.ingredients ?? "")
+                    .withPadding(v: 0, h: 10),
+              ),
+              ExpansionPanel(
+                isExpanded: isOpen[2],
+                headerBuilder: (context, value) {
+                  return Text("How To Use").withPadding(v: 5, h: 10);
+                },
+                body: Text(currentProduct.howToUse ?? "")
+                    .withPadding(v: 0, h: 10),
+              ),
+            ],
+            expansionCallback: (index, value) {
+              setState(() {
+                isOpen[index] = !value;
+              });
+              log("====Index: ${index}");
+            },
+          ),
+          Divider(
+            thickness: 2,
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Product Name",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      const SizedBox(width: 20),
-                      //Star
-                      Expanded(
-                        child: Text(
-                          currentProduct.name,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ),
-                      //Favourite Icon
-                    ]),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Brand Name",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      //Star
-                      Text(
-                        currentProduct.brandName ?? '',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                      //Favourite Icon
-                    ]),
-                SizedBox(
-                  height: 20,
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Category",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                        const SizedBox(width: 25),
-                        Text(
-                          getCategoryFromList(currentProduct.category),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                          maxLines: 3,
-                        ),
-                        //Favourite Icon
-                      ]),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Price",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                    Text(
-                      "${currentProduct.price} Kyats",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Discount Price",
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                    Text(
-                      (currentProduct.discountPrice ?? 0) > 0
-                          ? "${currentProduct.discountPrice} Kyats"
-                          : "no discount price",
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ExpandedWidget(
-                  text: currentProduct.description,
-                ),
-                SizedBox(
-                  height: 30,
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -329,6 +342,117 @@ class DetailScreen extends StatelessWidget {
               ],
             ),
           ),
+          //Overall Rating
+          Obx(() {
+            var totalRating = pdController.totalRating.value;
+            var ratingCount = pdController.ratingCount.value;
+            var ratingMap = pdController.ratingMap;
+            var rating = totalRating / ratingCount;
+            return SizedBox(
+              width: size.width,
+              child: ListView(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                shrinkWrap: true,
+                children: [
+                  //OverAll Rating
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Overall Rating",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "${rating.isNaN ? 0 : rating}",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RatingBar.builder(
+                            initialRating: rating.isNaN ? 0 : rating,
+                            minRating: 0,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 20,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            ignoreGestures: true,
+                            onRatingUpdate: (rating) {},
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "base on ${ratingCount} reviews",
+                            style: TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  //Stars and Number
+                ]..addAll(ratingMap.entries.map((e) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+                        return SizedBox(
+                          width: width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                pdController.categoryToString(e.key),
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              SizedBox(
+                                width: width * 0.6,
+                                child: LinearProgressIndicator(
+                                  value: e.value / 10,
+                                  backgroundColor: Colors.grey.shade200,
+                                  color: pdController.categoryToColor(e.key),
+                                  minHeight: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    );
+                  }).toList()),
+              ),
+            );
+          }),
           //--------------Review------//
           ProductReviewWidget(
             product: currentProduct,
@@ -572,4 +696,11 @@ class _AddToCartState extends State<AddToCart> {
       ),
     );
   }
+}
+
+extension padd on Widget {
+  Widget withPadding({required double v, required double h}) => Padding(
+        padding: EdgeInsets.symmetric(vertical: v, horizontal: h),
+        child: this,
+      );
 }
