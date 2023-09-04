@@ -37,8 +37,8 @@ class _DetailScreenState extends State<DetailScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: detailTextBackgroundColor,
-      /*  appBar: AppBar(
-        /* actions: [
+      appBar: AppBar(
+        actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: ValueListenableBuilder(
@@ -70,20 +70,20 @@ class _DetailScreenState extends State<DetailScreen> {
               },
             ),
           ),
-        ], */
+        ],
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
         backgroundColor: Colors.white,
-        /* title: Text(
-          currentProduct!.name,
+        title: Text(
+          currentProduct.brandName ?? "",
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-        ), */
+        ),
+        centerTitle: true,
       ),
-      */
       body: ListView(
         children: [
-          //Brand Name
+          /*  //Brand Name
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -103,7 +103,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
               Expanded(child: const SizedBox()),
               //Favourite Icon
-              Padding(
+              /* Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: ValueListenableBuilder(
                   valueListenable: Hive.box<HiveItem>(boxName).listenable(),
@@ -133,10 +133,10 @@ class _DetailScreenState extends State<DetailScreen> {
                         ));
                   },
                 ),
-              ),
+              ), */
             ],
           ),
-          //Product Name
+           */ //Product Name
           Center(
             child: Text(
               currentProduct.name,

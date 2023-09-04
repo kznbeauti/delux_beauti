@@ -120,7 +120,7 @@ class BottomNav extends StatelessWidget {
                               : Colors.grey,
                         ),
                         CircleAvatar(
-                            backgroundColor: Colors.orangeAccent,
+                            backgroundColor: Colors.red,
                             minRadius: 0,
                             maxRadius: 10,
                             child: Text(

@@ -204,7 +204,7 @@ class ProductReviewWidget extends StatelessWidget {
                         primary: Colors.white,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                            color: Colors.orangeAccent,
+                            color: Colors.red,
                           ),
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),

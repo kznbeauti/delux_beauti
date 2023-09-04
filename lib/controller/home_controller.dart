@@ -524,7 +524,7 @@ class HomeController extends GetxController {
       price: model.price,
       size: "",
       color: model.color,
-      status: model.status,
+      status: model.status ?? "",
       category: model.category.fold("", (p, n) => p + "$n,"),
       tags: model.tags,
       dateTime: model.dateTime,

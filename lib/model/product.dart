@@ -21,7 +21,7 @@ class Product with _$Product {
     @JsonKey(nullable: true) String? color,
     @JsonKey(defaultValue: 0) int? requirePoint,
     @JsonKey(nullable: true) String? advertisementID,
-    required String status,
+    @JsonKey(nullable: true) String? status,
     required List<String> category,
     @JsonKey(nullable: true) String? brandID,
     required List<String> tags,

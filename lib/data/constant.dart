@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 const Color scaffoldBackground = Colors.white;
 const Color appBarColor = Colors.white;
 const Color appBarTitleColor = Color.fromRGBO(19, 19, 19, 1);
-const Color homeIndicatorColor = Colors.orangeAccent;
+const Color homeIndicatorColor = Colors.red;
 const Color detailBackgroundColor = Colors.white;
 const Color detailTextBackgroundColor = Colors.white;
 ButtonStyle buttonStyle = ButtonStyle(
-  backgroundColor: MaterialStateProperty.all(Colours.goldenRod),
+  backgroundColor: MaterialStateProperty.all(Colours.red),
 );
 
 const String baseUrl = 'http://192.168.1.5:5000/api/v1/streaming/movie/';

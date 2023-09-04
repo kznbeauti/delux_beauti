@@ -56,6 +56,11 @@ class UploadController extends GetxController {
   String? sizeValidator(String? data) => data?.isEmpty == true ? 'empty' : null;
 
   void changeStatus(String value) {
+    if (status.value == value) {
+      status.value = "";
+      return;
+    }
+
     status.value = value;
   }
 
@@ -98,7 +103,7 @@ class UploadController extends GetxController {
       remainQuantity.text = editItem.remainQuantity.toString();
       advertisementID = editItem.advertisementID ?? "";
       deliveryTimeController.text = editItem.deliveryTime ?? "";
-      status.value = editItem.status;
+      status.value = editItem.status ?? "";
       selectedCategories.value = List.from(editItem.category);
       log("SelectedCategories:${selectedCategories.length}");
       if (editItem.tags.isNotEmpty) {
@@ -188,7 +193,7 @@ class UploadController extends GetxController {
     try {
       if (form.currentState?.validate() == true &&
           selectedCategories.isNotEmpty &&
-          status.isNotEmpty &&
+          /* status.isNotEmpty && */
           selectedBrandId.value.isNotEmpty) {
         final brandName = _homeController.brandList
             .firstWhere((element) => element.id == selectedBrandId.value)
