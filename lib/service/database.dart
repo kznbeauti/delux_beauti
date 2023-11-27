@@ -255,8 +255,10 @@ class Database {
 
       final int remainQuan = secureSnapshot.get("remainQuantity") as int;
       log("Remain Quantity: $remainQuan\nProduct's Count: ${product.count}");
+      var remainQuantity = remainQuan - product.count;
+      var remain = remainQuantity < 0 ? 0 : remainQuantity;
       transaction.update(secureSnapshot.reference, {
-        "remainQuantity": remainQuan - product.count,
+        "remainQuantity": remain,
       });
     });
   }
