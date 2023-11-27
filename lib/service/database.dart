@@ -11,6 +11,7 @@ import '../controller/home_controller.dart';
 import '../model/product.dart';
 import '../model/real_purchase.dart';
 import 'api.dart';
+import 'dart:developer';
 
 class Database {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
@@ -253,7 +254,7 @@ class Database {
           .get(_firebaseFirestore.collection(itemCollection).doc(product.id));
 
       final int remainQuan = secureSnapshot.get("remainQuantity") as int;
-
+      log("Remain Quantity: $remainQuan\nProduct's Count: ${product.count}");
       transaction.update(secureSnapshot.reference, {
         "remainQuantity": remainQuan - product.count,
       });

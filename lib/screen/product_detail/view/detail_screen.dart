@@ -4,13 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/route_manager.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
 import 'package:get/get.dart';
-import 'package:kozarni_ecome/expaned_widget.dart';
 import 'package:kozarni_ecome/model/hive_item.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
 import 'package:kozarni_ecome/screen/product_detail/controller/product_detail_controller.dart';
@@ -44,7 +41,7 @@ class _DetailScreenState extends State<DetailScreen> {
             child: ValueListenableBuilder(
               valueListenable: Hive.box<HiveItem>(boxName).listenable(),
               builder: (context, Box<HiveItem> box, widget) {
-                final currentObj = box.get(currentProduct!.id);
+                final currentObj = box.get(currentProduct.id);
 
                 if (!(currentObj == null)) {
                   return IconButton(
@@ -472,7 +469,7 @@ class _DetailScreenState extends State<DetailScreen> {
         // ),
         padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
         child: !(currentProduct.remainQuantity == null) &&
-                (currentProduct.remainQuantity! == 0)
+                (currentProduct.remainQuantity! < 1)
             ? ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
