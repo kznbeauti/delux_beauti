@@ -9,8 +9,10 @@ import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
 import 'package:get/get.dart';
 import 'package:kozarni_ecome/model/hive_item.dart';
+import 'package:kozarni_ecome/model/product.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
 import 'package:kozarni_ecome/screen/product_detail/controller/product_detail_controller.dart';
+import 'package:kozarni_ecome/screen/view/home.dart';
 import '../../../utils/fun.dart';
 import '../../../widgets/product_review/product_review.dart';
 import '../../home_screen.dart';
@@ -457,58 +459,67 @@ class _DetailScreenState extends State<DetailScreen> {
           //-----------------------//
         ],
       ),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        height: 65,
-        // decoration: BoxDecoration(
-        //   color: detailBackgroundColor,
-        //   borderRadius: BorderRadius.only(
-        //     topLeft: Radius.circular(20),
-        //     topRight: Radius.circular(20),
-        //   ),
-        // ),
-        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-        child: !(currentProduct.remainQuantity == null) &&
-                (currentProduct.remainQuantity! < 1)
-            ? ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.grey.shade300),
-                ),
-                onPressed: null,
-                child: Text("Out of stock"),
-              )
-            : ElevatedButton(
-                style: buttonStyle,
-                onPressed: () {
-                  if ((currentProduct.color == null) &&
-                      (currentProduct.size == null ||
-                          (currentProduct.size?.isEmpty == true))) {
-                    //------Add to Cart-------//
-                    controller.addToCart(currentProduct,
-                        price: currentProduct.price);
-                    Get.back();
-                  } else {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      )),
-                      builder: (context) {
-                        return AddToCart(
-                          sizePriceList: currentProduct.size ?? [],
-                          imageUrl: currentProduct.photo1,
-                          color: currentProduct.color ?? "No Color",
-                        );
-                      },
-                    );
-                  }
-                },
-                child: Text("၀ယ်ယူရန်"),
-              ),
-      ),
+      bottomNavigationBar: FutureBuilder<Product>(
+          future: controller.getProduct(currentProduct.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final product = snapshot.data!;
+              return Container(
+                width: double.infinity,
+                height: 65,
+                // decoration: BoxDecoration(
+                //   color: detailBackgroundColor,
+                //   borderRadius: BorderRadius.only(
+                //     topLeft: Radius.circular(20),
+                //     topRight: Radius.circular(20),
+                //   ),
+                // ),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                child: !(product.remainQuantity == null) &&
+                        (product.remainQuantity! < 1)
+                    ? ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey.shade300),
+                        ),
+                        onPressed: null,
+                        child: Text("Out of stock"),
+                      )
+                    : ElevatedButton(
+                        style: buttonStyle,
+                        onPressed: () {
+                          if ((currentProduct.color == null) &&
+                              (currentProduct.size == null ||
+                                  (currentProduct.size?.isEmpty == true))) {
+                            //------Add to Cart-------//
+                            controller.addToCart(currentProduct,
+                                price: currentProduct.price);
+                            Get.back();
+                          } else {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              )),
+                              builder: (context) {
+                                return AddToCart(
+                                  sizePriceList: currentProduct.size ?? [],
+                                  imageUrl: currentProduct.photo1,
+                                  color: currentProduct.color ?? "No Color",
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: Text("၀ယ်ယူရန်"),
+                      ),
+              );
+            }
+            return LoadingWidget();
+          }),
     );
   }
 }

@@ -770,6 +770,18 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<Product> getProduct(String id) async {
+    final result = await FirebaseFirestore.instance
+        .collection("items")
+        .withConverter<Product>(
+          fromFirestore: (json, snap) => Product.fromJson(json.data()!),
+          toFirestore: (p, snap) => p.toJson(),
+        )
+        .doc(id)
+        .get();
+    return result.data()!;
+  }
+
   //Loading Font to not take time when user in App to this font
   late ByteData oleoBold;
   late ByteData cherryUnicode;
