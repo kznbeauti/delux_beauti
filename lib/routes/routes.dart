@@ -7,6 +7,7 @@ import 'package:kozarni_ecome/screen/brand_management/bin/brand_binding.dart';
 import 'package:kozarni_ecome/screen/brand_management/view/brand_view.dart';
 import 'package:kozarni_ecome/screen/cart.dart';
 import 'package:kozarni_ecome/screen/check_out_screen.dart';
+import 'package:kozarni_ecome/screen/ordering_successful.dart';
 import 'package:kozarni_ecome/screen/product_detail/bin/product_detail_binding.dart';
 import 'package:kozarni_ecome/screen/product_detail/view/detail_screen.dart';
 import 'package:kozarni_ecome/screen/division/bin/division_binding.dart';
@@ -38,6 +39,7 @@ const String mangeItemScreen = '/manage-item';
 const String purchaseScreen = '/purchase-screen';
 const String blueToothScreen = '/bluetooth-screen';
 const String searchScreen = '/searchScreen';
+const String orderSuccess = '/orderSuccess';
 const String advertisementUrl = '/advertisement';
 const String advertisementUrl2 = '/advertisement2';
 const String categoriesUrl = '/categories';
@@ -62,6 +64,10 @@ List<GetPage> routes = [
   GetPage(
     name: privacyPolicyUrl,
     page: () => PrivacyPolicyRoute(),
+  ),
+  GetPage(
+    name: orderSuccess,
+    page: () => OrderingSuccessful(),
   ),
   GetPage(
     name: returnPolicyUrl,

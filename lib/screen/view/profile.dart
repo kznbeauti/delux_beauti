@@ -1,13 +1,17 @@
 import 'package:colours/colours.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_verification_code/flutter_verification_code.dart';
+import 'package:flutterfire_ui/auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
+import 'package:kozarni_ecome/utils/extension.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../../controller/auth_controller.dart';
 import '../order_history.dart';
 
 class ProfileView extends StatelessWidget {
@@ -578,117 +582,380 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final focusBorder =
+        OutlineInputBorder(borderSide: BorderSide(color: homeIndicatorColor));
+    final errorBorder = OutlineInputBorder(
+        borderSide: BorderSide(
+      color: Colors.red,
+    ));
+    final border =
+        OutlineInputBorder(borderSide: BorderSide(color: Colors.white));
+    final labelTextStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+    );
+
+    final textStyle = TextStyle(color: Colors.white);
     final HomeController homeController = Get.find();
+    final AuthenticationController authController = Get.find();
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: Container(
-              color: Colors.transparent,
-              constraints: BoxConstraints(
-                maxWidth: 400.0,
+      body: SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            //LOGO
+            ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(10),
               ),
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                    child: Image.asset(
-                      "assets/applogo.png",
-                      width: Get.width / 3,
-                    ),
-                  ),
-                  /*Text(
-                    "Pos App",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),*/
-                  SizedBox(
-                    height: 50.0,
-                  ),
-                  Container(
-                    width: Get.width - 100,
-                    child: InkWell(
-                      onTap: () => homeController.signInWithGoogle(),
-                      child: Column(
-                        children: [
-                          Card(
-                            color: homeIndicatorColor,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
+              child: Image.asset(
+                "assets/applogo.png",
+                width: Get.width / 3,
+              ),
+            ),
+            10.vertical(),
+            Text(
+              "DELUX BEAUTI",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                // fontStyle: FontStyle.italic,
+                wordSpacing: 2,
+                letterSpacing: 3,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: LayoutBuilder(builder: (context, constraints) {
+                final height = constraints.maxHeight;
+                return Container(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  height: height,
+                  decoration: BoxDecoration(
+                      color: logoColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      )),
+                  child: AutofillGroup(
+                    child: SingleChildScrollView(
+                      child: Obx(() {
+                        final errorPassword =
+                            authController.password.value.isEmpty &&
+                                authController.firstTimePressedLogin.value;
+                        final errorEmail =
+                            authController.emailOrPhoneNumber.value.isEmpty &&
+                                authController.firstTimePressedLogin.value;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 50),
+                            //Email
+                            Text(
+                              "Email or Phone Number",
+                              style: labelTextStyle,
+                            ),
+                            const SizedBox(height: 10),
+                            TextField(
+                              style: textStyle,
+                              cursorColor: homeIndicatorColor,
+                              onChanged: authController.changeEmailOrPhone,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                enabledBorder: border,
+                                focusedBorder: focusBorder,
+                                errorBorder: errorBorder,
+                                disabledBorder: border,
+                                focusedErrorBorder: errorBorder,
+                                hintText: "example@gmail.com (or) 09987654321",
+                                hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade700,
+                                ),
+                                errorText: errorEmail
+                                    ? "Email or Phone Number is required."
+                                    : null,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            //Password
+                            Text(
+                              "Password",
+                              style: labelTextStyle,
+                            ),
+                            const SizedBox(height: 10),
+                            TextField(
+                              obscureText: authController.passwordSecure.value,
+                              style: textStyle,
+                              onChanged: authController.changePassword,
+                              cursorColor: homeIndicatorColor,
+                              keyboardType: TextInputType.visiblePassword,
+                              decoration: InputDecoration(
+                                enabledBorder: border,
+                                focusedBorder: focusBorder,
+                                errorBorder: errorBorder,
+                                disabledBorder: border,
+                                focusedErrorBorder: errorBorder,
+                                hintText: "R#2pL@9w!",
+                                hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade700,
+                                ),
+                                errorText: errorPassword
+                                    ? "Password is required."
+                                    : null,
+                                suffixIcon: IconButton(
+                                  onPressed:
+                                      authController.changePasswordSecure,
+                                  icon: Icon(
+                                    authController.passwordSecure.value
+                                        ? FontAwesomeIcons.eyeSlash
+                                        : FontAwesomeIcons.eye,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ElevatedButton(
+                              onPressed: authController.emailSignInLoading.value
+                                  ? null
+                                  : () => authController.login(),
+                              child: authController.emailSignInLoading.value
+                                  ? SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      "Login",
+                                      style: labelTextStyle,
+                                    ),
+                            ).withCenter(),
+                            10.vertical(),
+                            Center(
+                              child: Text(
+                                "(or)",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            //Social Login
+                            Center(
+                              child: Text(
+                                "Login With",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ),
+                            20.vertical(),
+                            SizedBox(
+                              height: 40,
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    backgroundColor: homeIndicatorColor,
-                                    radius: 12,
-                                    child: Icon(
-                                      FontAwesomeIcons.google,
-                                      color: Colors.white,
-                                      size: 20,
+                                  InkWell(
+                                    onTap: () =>
+                                        homeController.signInWithGoogle(),
+                                    child: Image.asset(
+                                      googleLogo,
+                                      height: 40,
+                                      width: 40,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Sign in with Google",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 19,
-                                      color: Colors.white,
+                                  20.horizontal(),
+                                  InkWell(
+                                    onTap: () =>
+                                        homeController.signInWithApple(),
+                                    child: Image.asset(
+                                      appleLogo,
+                                      height: 40,
+                                      width: 40,
                                     ),
                                   ),
                                 ],
-                              ),
+                              ).withCenter(),
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            height: 55,
-                            width: 300,
-                            child: SignInWithAppleButton(onPressed: () async {
-                              final credentials =
-                                  await SignInWithApple.getAppleIDCredential(
-                                      scopes: [
-                                    AppleIDAuthorizationScopes.email,
-                                    AppleIDAuthorizationScopes.fullName
-                                  ]);
-                              debugPrint(credentials.email);
-                              debugPrint(credentials.state);
-                              OAuthProvider oAuthProvider =
-                                  OAuthProvider("apple.com");
-                              final AuthCredential credential =
-                                  oAuthProvider.credential(
-                                idToken: String.fromCharCodes(
-                                    credentials.identityToken!.codeUnits),
-                                accessToken: String.fromCharCodes(
-                                    credentials.authorizationCode.codeUnits),
-                              );
-                              await FirebaseAuth.instance
-                                  .signInWithCredential(credential)
-                                  .then((value) => {
-                                        Get.offNamed(homeScreen),
-                                      });
-                            }),
-                          ),
-                        ],
-                      ),
+                          ],
+                        );
+                      }),
                     ),
                   ),
-                ],
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PhoneVerificationPage extends StatelessWidget {
+  const PhoneVerificationPage({
+    Key? key,
+    required this.onCompleted,
+    required this.resendCode,
+  }) : super(key: key);
+  final void Function(String) onCompleted;
+  final void Function() resendCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final focusBorder =
+        OutlineInputBorder(borderSide: BorderSide(color: homeIndicatorColor));
+    final errorBorder = OutlineInputBorder(
+        borderSide: BorderSide(
+      color: Colors.red,
+    ));
+    final border =
+        OutlineInputBorder(borderSide: BorderSide(color: Colors.white));
+    final labelTextStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+    );
+
+    final textStyle = TextStyle(color: Colors.white);
+    final HomeController homeController = Get.find();
+    final AuthenticationController authController = Get.find();
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            //LOGO
+
+            Text(
+              "PHONE CODE VERIFICATION",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                // fontStyle: FontStyle.italic,
+                wordSpacing: 2,
+                letterSpacing: 3,
               ),
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: LayoutBuilder(builder: (context, constraints) {
+                final height = constraints.maxHeight;
+                return Container(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  height: height,
+                  decoration: BoxDecoration(
+                      color: logoColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      )),
+                  child: SingleChildScrollView(
+                    child: Obx(() {
+                      final errorPassword =
+                          authController.password.value.isEmpty &&
+                              authController.firstTimePressedLogin.value;
+                      final errorEmail =
+                          authController.emailOrPhoneNumber.value.isEmpty &&
+                              authController.firstTimePressedLogin.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 50),
+                          //Email
+                          Text(
+                            "We have sent the verification code to ${authController.emailOrPhoneNumber}",
+                            style: labelTextStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          40.vertical(),
+                          VerificationCode(
+                            onEditing: (v) {},
+                            fullBorder: true,
+                            textStyle:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                            keyboardType: TextInputType.number,
+                            underlineColor: Colors
+                                .amber, // If this is null it will use primaryColor: Colors.red from Theme
+                            length: 6,
+                            cursorColor: Colors
+                                .white, // If this is null it will default to the ambient
+                            // clearAll is NOT required, you can delete it
+                            // takes any widget, so you can implement your design
+                            clearAll: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'clear all',
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    decoration: TextDecoration.underline,
+                                    color: homeIndicatorColor),
+                              ),
+                            ),
+                            onCompleted: (String value) {
+                              onCompleted(value);
+                            },
+                          ),
+                          20.vertical(),
+                          ElevatedButton(
+                            onPressed: authController.codeRetrieveTimeout.value
+                                ? resendCode
+                                : () => authController.login(),
+                            child: Text(
+                              authController.codeRetrieveTimeout.value
+                                  ? "Resend"
+                                  : "Verify",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ).withCenter(),
+                        ],
+                      );
+                    }),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

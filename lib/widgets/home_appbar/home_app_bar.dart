@@ -2,6 +2,7 @@ import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/constant.dart';
@@ -12,82 +13,88 @@ class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: appBarColor,
-      elevation: 0,
-      title: Text(
-        "DELUX BEAUTI",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-          // fontStyle: FontStyle.italic,
-          wordSpacing: 2,
-          letterSpacing: 3,
-        ),
-      ),
-      // centerTitle: true,
-      actions: [
-        SizedBox(
-          width: 45,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              alignment: Alignment.center,
-              backgroundColor: MaterialStateProperty.all(Colors.white),
-              elevation: MaterialStateProperty.resolveWith<double>(
-                // As you said you dont need elevation. I'm returning 0 in both case
-                (Set<MaterialState> states) {
-                  if (states.contains(MaterialState.disabled)) {
-                    return 0;
-                  }
-                  return 0; // Defer to the widget's default.
-                },
-              ),
-            ),
-            onPressed: () => Get.toNamed(searchScreen),
-            child: FaIcon(
-              FontAwesomeIcons.search,
-              color: Colors.black,
-              size: 23,
-            ),
+    final HomeController controller = Get.find();
+    return Obx(() {
+      if (controller.navIndex == 5) {
+        return Container();
+      }
+      return AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: appBarColor,
+        elevation: 0,
+        title: Text(
+          "DELUX BEAUTI",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            // fontStyle: FontStyle.italic,
+            wordSpacing: 2,
+            letterSpacing: 3,
           ),
         ),
-        SizedBox(
-          width: 45,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              alignment: Alignment.center,
-              backgroundColor: MaterialStateProperty.all(Colors.white),
-              elevation: MaterialStateProperty.resolveWith<double>(
-                // As you said you dont need elevation. I'm returning 0 in both case
-                (Set<MaterialState> states) {
-                  if (states.contains(MaterialState.disabled)) {
-                    return 0;
-                  }
-                  return 0; // Defer to the widget's default.
-                },
+        // centerTitle: true,
+        actions: [
+          SizedBox(
+            width: 45,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                alignment: Alignment.center,
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                elevation: MaterialStateProperty.resolveWith<double>(
+                  // As you said you dont need elevation. I'm returning 0 in both case
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return 0;
+                    }
+                    return 0; // Defer to the widget's default.
+                  },
+                ),
+              ),
+              onPressed: () => Get.toNamed(searchScreen),
+              child: FaIcon(
+                FontAwesomeIcons.search,
+                color: Colors.black,
+                size: 23,
               ),
             ),
-            onPressed: () async {
-              try {
-                await launch('https://m.me/deluxbeauti');
-              } catch (e) {
-                print(e);
-              }
-            },
-            child: FaIcon(
-              FontAwesomeIcons.facebookMessenger,
-              color: Colors.blue,
-              size: 23,
+          ),
+          SizedBox(
+            width: 45,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                alignment: Alignment.center,
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                elevation: MaterialStateProperty.resolveWith<double>(
+                  // As you said you dont need elevation. I'm returning 0 in both case
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return 0;
+                    }
+                    return 0; // Defer to the widget's default.
+                  },
+                ),
+              ),
+              onPressed: () async {
+                try {
+                  await launch('https://m.me/deluxbeauti');
+                } catch (e) {
+                  print(e);
+                }
+              },
+              child: FaIcon(
+                FontAwesomeIcons.facebookMessenger,
+                color: Colors.blue,
+                size: 23,
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          width: 20,
-        ),
-      ],
-    );
+          SizedBox(
+            width: 20,
+          ),
+        ],
+      );
+    });
   }
 
   @override

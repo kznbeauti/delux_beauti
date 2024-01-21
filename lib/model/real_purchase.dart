@@ -20,6 +20,8 @@ class PurchaseModel with _$PurchaseModel {
     required List deliveryTownshipInfo,
     @JsonKey(nullable: true) String? bankSlipImage,
     required String dateTime,
+    int? orderStatus,
+    String? userId,
   }) = _PurchaseModel;
   factory PurchaseModel.fromJson(Map<String, dynamic> json) => PurchaseModel(
         id: json['id'] as String,
@@ -37,5 +39,7 @@ class PurchaseModel with _$PurchaseModel {
         deliveryTownshipInfo: json['deliveryTownshipInfo'] as List<dynamic>,
         bankSlipImage: json['bankSlipImage'] as String?,
         dateTime: json['dateTime'] as String,
+        orderStatus: json['orderStatus'] as int?,
+        userId: json['userId'] as String?,
       );
 }

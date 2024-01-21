@@ -33,7 +33,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   // FirebaseMessaging messaging = FirebaseMessaging.instance;
   // FlutterLocalNotificationsPlugin? fltNotification;
 
@@ -44,12 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // notitficationPermission();
     // initMessaging();
   }
+
   selectNotification(String? payload) async {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
     await Get.toNamed(purchaseScreen);
-}
+  }
 
   void onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) async {
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //Initialization
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: selectNotification);
-    
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'Channel ID: 1',
@@ -116,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint("**********Push Reach******");
     });
   }
-
 
   // void notitficationPermission() async {
   //   await messaging.requestPermission(

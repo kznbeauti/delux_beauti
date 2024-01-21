@@ -32,6 +32,15 @@ class Database {
       _firebaseFirestore
           .collection(collectionPath)
           .orderBy('dateTime', descending: true)
+          //this is new line
+          /* .orderBy('orderStatus') */
+          .snapshots();
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchUserOrder(
+          {required String userId}) =>
+      _firebaseFirestore
+          .collection(purchaseCollection)
+          .where('userId', isEqualTo: userId)
+          .orderBy('dateTime', descending: true)
           .snapshots();
 
   Future<DocumentSnapshot<Map<String, dynamic>>> read(
@@ -49,8 +58,6 @@ class Database {
 
   //Write PurchaseData
   Future<void> writePurchaseData(PurchaseModel model) async {
-    List<PurchaseItem> rewardProductList =
-        model.items.where((element) => element.requirePoint! > 0).toList();
     if (!(model.bankSlipImage == null)) {
       final file = File(model.bankSlipImage!);
       debugPrint("**************${model.bankSlipImage!}");
@@ -80,31 +87,9 @@ class Database {
               } catch (e) {
                 debugPrint("********Push Failed: $e**");
               } //First Reduce Item Quantity
-              for (var product in model.items) {
-                await updateRemainQuantity(product);
-              }
-              int totalPay = 0;
-              for (var item in model.items) {
-                if (item.discountPrice! > 0) {
-                  totalPay += item.count * item.discountPrice!;
-                } else if (!(item.requirePoint! > 0)) {
-                  totalPay += item.count * item.price;
-                }
-              }
-              debugPrint("*******Totalpay: $totalPay********");
-              await increaseCurrentUserPoint(
-                  int.parse("${totalPay / 100}".split('.').first));
-              if (rewardProductList.isNotEmpty) {
-                int totalPoints = 0;
-                for (var item in rewardProductList) {
-                  totalPoints += item.requirePoint! * item.count;
-                }
-                try {
-                  await reduceCurrentUserPoint(totalPoints);
-                } catch (e) {
-                  debugPrint("*****ReduceFailed: $e");
-                }
-              }
+              /* updateRemainWhenConfirmed();
+
+              functionForUserPoint(); */
             });
           });
         });
@@ -112,6 +97,7 @@ class Database {
         debugPrint("*******Image Upload Error $e******");
       }
     } else {
+      //For CashOnDelivery
       try {
         await _firebaseFirestore
             .collection(purchaseCollection)
@@ -129,32 +115,6 @@ class Database {
                     debugPrint("*****Success push notification*****"));
           } catch (e) {
             debugPrint("********Push Failed: $e**");
-          }
-          //First Reduce Item Quantity
-          for (var product in model.items) {
-            await updateRemainQuantity(product);
-          }
-          int totalPay = 0;
-          for (var item in model.items) {
-            if (item.discountPrice! > 0) {
-              totalPay += item.count * item.discountPrice!;
-            } else if (!(item.requirePoint! > 0)) {
-              totalPay += item.count * item.price;
-            }
-          }
-          debugPrint("*******Totalpay: $totalPay********");
-          await increaseCurrentUserPoint(
-              int.parse("${totalPay / 100}".split('.').first));
-          if (rewardProductList.isNotEmpty) {
-            int totalPoints = 0;
-            for (var item in rewardProductList) {
-              totalPoints += item.requirePoint! * item.count;
-            }
-            try {
-              await reduceCurrentUserPoint(totalPoints);
-            } catch (e) {
-              debugPrint("*****ReduceFailed: $e");
-            }
           }
         });
       } on FirebaseException catch (e) {
@@ -202,13 +162,13 @@ class Database {
 
 //--------------Functions For Reward System------------------------------//
   //Give Point Depend on Order Product Count
-  Future<void> increaseCurrentUserPoint(int increasePoint) async {
+  Future<void> increaseCurrentUserPoint(
+      int increasePoint, String userID) async {
     HomeController _controller = Get.find();
     _firebaseFirestore.runTransaction(
       (transaction) async {
-        final secureSnapshot = await transaction.get(_firebaseFirestore
-            .collection(adminUserCollection)
-            .doc(_controller.currentUser.value!.id));
+        final secureSnapshot = await transaction.get(
+            _firebaseFirestore.collection(adminUserCollection).doc(userID));
 
         final int previousPoint = secureSnapshot.get("points") as int;
         debugPrint(
@@ -224,13 +184,12 @@ class Database {
   }
 
   //Reduce Point Depend on Order Product Count
-  Future<void> reduceCurrentUserPoint(int reducePoint) async {
+  Future<void> reduceCurrentUserPoint(int reducePoint, String userID) async {
     HomeController _controller = Get.find();
     _firebaseFirestore.runTransaction(
       (transaction) async {
-        final secureSnapshot = await transaction.get(_firebaseFirestore
-            .collection(adminUserCollection)
-            .doc(_controller.currentUser.value!.id));
+        final secureSnapshot = await transaction.get(
+            _firebaseFirestore.collection(adminUserCollection).doc(userID));
 
         final int previousPoint = secureSnapshot.get("points") as int;
 
@@ -261,5 +220,60 @@ class Database {
         "remainQuantity": remain,
       });
     });
+  }
+
+  Future<void> functionForUserPoint(PurchaseModel model) async {
+    List<PurchaseItem> rewardProductList =
+        model.items.where((element) => element.requirePoint! > 0).toList();
+    int totalPay = 0;
+    for (var item in model.items) {
+      if (item.discountPrice! > 0) {
+        totalPay += item.count * item.discountPrice!;
+      } else if (!(item.requirePoint! > 0)) {
+        totalPay += item.count * item.price;
+      }
+    }
+    debugPrint("*******Totalpay: $totalPay********");
+    await increaseCurrentUserPoint(
+        int.parse("${totalPay / 100}".split('.').first), model.userId!);
+    if (rewardProductList.isNotEmpty) {
+      int totalPoints = 0;
+      for (var item in rewardProductList) {
+        totalPoints += item.requirePoint! * item.count;
+      }
+      try {
+        await reduceCurrentUserPoint(totalPoints, model.userId!);
+      } catch (e) {
+        debugPrint("*****ReduceFailed: $e");
+      }
+    }
+    /* int totalPay = 0;
+          for (var item in model.items) {
+            if (item.discountPrice! > 0) {
+              totalPay += item.count * item.discountPrice!;
+            } else if (!(item.requirePoint! > 0)) {
+              totalPay += item.count * item.price;
+            }
+          }
+          debugPrint("*******Totalpay: $totalPay********");
+          await increaseCurrentUserPoint(
+              int.parse("${totalPay / 100}".split('.').first));
+          if (rewardProductList.isNotEmpty) {
+            int totalPoints = 0;
+            for (var item in rewardProductList) {
+              totalPoints += item.requirePoint! * item.count;
+            }
+            try {
+              await reduceCurrentUserPoint(totalPoints);
+            } catch (e) {
+              debugPrint("*****ReduceFailed: $e");
+            }
+          }*/
+  }
+
+  Future<void> updateRemainWhenConfirmed(PurchaseModel model) async {
+    for (var product in model.items) {
+      await updateRemainQuantity(product);
+    }
   }
 }

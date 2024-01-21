@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Condition;
+import 'package:kozarni_ecome/utils/extension.dart';
+import 'package:kozarni_ecome/utils/fun.dart';
 
 import '../../controller/home_controller.dart';
 import '../../data/constant.dart';
@@ -214,21 +216,117 @@ Widget purchaseDialogBox({
       const SizedBox(
         height: 10,
       ),
-      ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: homeIndicatorColor,
-        ),
-        onPressed: () {
-          //Show BlueTooth Dialog..Box....
-          Get.to(UserOrderPrintView(
-            purchaseModel: purchaseModel,
-            total: total,
-            shipping: shipping,
-            township: township,
-          ));
-        },
-        child: Text("Print Preview"),
+      PurchaseDialogButton(
+        total: total,
+        shipping: shipping,
+        township: township,
+        purchaseModel: purchaseModel,
       ),
     ],
   );
+}
+
+class PurchaseDialogButton extends StatelessWidget {
+  const PurchaseDialogButton({
+    Key? key,
+    required this.total,
+    required this.shipping,
+    required this.township,
+    required this.purchaseModel,
+  }) : super(key: key);
+
+  final int total;
+  final int shipping;
+  final String township;
+  final PurchaseModel purchaseModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final HomeController controller = Get.find();
+    switch (getOrderStatus(purchaseModel)) {
+      case OrderStatus.newOrder:
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.green,
+          ),
+          onPressed: () {
+            //TODO:Confirm this order
+            controller.changeOrderStatus(
+              purchaseModel: purchaseModel,
+              status: 0,
+            );
+          },
+          child: controller.changing.value
+              ? SizedBox(
+                  height: 35,
+                  width: 35,
+                  child: CircularProgressIndicator(
+                    color: homeIndicatorColor,
+                  ),
+                )
+              : Text("Confirm"),
+        );
+      case OrderStatus.confirmed:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: homeIndicatorColor,
+              ),
+              onPressed: () {
+                Get.to(UserOrderPrintView(
+                  purchaseModel: purchaseModel,
+                  total: total,
+                  shipping: shipping,
+                  township: township,
+                ));
+              },
+              child: Text("Print Preview"),
+            ),
+            10.vertical(),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: homeIndicatorColor,
+              ),
+              onPressed: () {
+                controller.changeOrderStatus(
+                    purchaseModel: purchaseModel, status: 1);
+              },
+              child: Text("Shipped"),
+            ),
+          ],
+        );
+      case OrderStatus.shipped:
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: homeIndicatorColor,
+          ),
+          onPressed: () {
+            Get.to(UserOrderPrintView(
+              purchaseModel: purchaseModel,
+              total: total,
+              shipping: shipping,
+              township: township,
+            ));
+          },
+          child: Text("Print Preview"),
+        );
+      default:
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: homeIndicatorColor,
+          ),
+          onPressed: () {
+            Get.to(UserOrderPrintView(
+              purchaseModel: purchaseModel,
+              total: total,
+              shipping: shipping,
+              township: township,
+            ));
+          },
+          child: Text("Print Preview"),
+        );
+    }
+  }
 }

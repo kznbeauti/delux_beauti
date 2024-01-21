@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kozarni_ecome/controller/auth_controller.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
 import 'package:kozarni_ecome/model/hive_item.dart';
@@ -28,7 +29,9 @@ Future<void> main() async {
   await Hive.openBox<HiveItem>(boxName);
   await Hive.openBox<HivePurchase>(purchaseBox);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   Get.put(HomeController());
+  Get.put(AuthenticationController());
   runApp(MyApp());
 }
 
@@ -53,9 +56,20 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
       debugShowCheckedModeBanner: false,
+      //TODO:
       initialRoute: homeScreen,
       getPages: routes,
-      theme: ThemeData.light().copyWith(primaryColor: homeIndicatorColor),
+      theme: ThemeData.light().copyWith(
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.white.withOpacity(0),
+            elevation: 0,
+          ),
+          primaryColor: homeIndicatorColor,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: homeIndicatorColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)))))),
       defaultTransition: Transition.fade,
     );
   }

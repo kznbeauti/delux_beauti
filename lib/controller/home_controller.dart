@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +27,7 @@ import 'package:kozarni_ecome/service/database.dart';
 import 'package:kozarni_ecome/widgets/show_dialog/show_dialog.dart';
 import 'package:kozarni_ecome/widgets/show_loading/show_loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:uuid/uuid.dart';
 
 import '../model/brand.dart';
@@ -564,14 +566,14 @@ class HomeController extends GetxController {
     );
   }
 
-  final RxList<PurchaseModel> _purchcases = <PurchaseModel>[].obs; ////
+  final RxList<PurchaseModel> purchcases = <PurchaseModel>[].obs; ////
 
   List<PurchaseModel> purchcasesCashOn() {
-    return _purchcases.where((item) => item.bankSlipImage == null).toList();
+    return purchcases.where((item) => item.bankSlipImage == null).toList();
   }
 
   List<PurchaseModel> purchcasesPrePay() {
-    return _purchcases.where((item) => item.bankSlipImage != null).toList();
+    return purchcases.where((item) => item.bankSlipImage != null).toList();
   } //////////////////
 
   final RxBool isLoading = false.obs;
@@ -581,6 +583,7 @@ class HomeController extends GetxController {
     final total = subTotal + townShipNameAndFee["fee"] as int;
     try {
       final list = getUserOrderData();
+      final orderId = Uuid().v4().substring(0, 4).toUpperCase();
       final _purchase = PurchaseModel(
         total: total,
         promotionValue: promotionType.value!.fold(
@@ -592,7 +595,8 @@ class HomeController extends GetxController {
           ),
         ),
         dateTime: DateTime.now().toString(),
-        id: Uuid().v1(),
+        id: orderId,
+        userId: currentUser.value!.id,
         items: myCart.map((cart) => cart).toList(),
         name: list[0],
         email: list[1],
@@ -625,8 +629,9 @@ class HomeController extends GetxController {
       try {
         await _database.writePurchaseData(_purchase).then((value) {
           hideLoading();
-          Get.back();
-          Get.snackbar("လူကြီးမင်း Order တင်ခြင်း", 'အောင်မြင်ပါသည်');
+          //Get.back();
+          Get.toNamed(orderSuccess);
+          //Get.snackbar("လူကြီးမင်း Order တင်ခြင်း", 'အောင်မြင်ပါသည်');
           purchaseHiveBox.put(hivePurchase.id, hivePurchase);
         });
       } catch (e) {
@@ -815,14 +820,14 @@ class HomeController extends GetxController {
           event.docs.map((e) => Division.fromJson(e.data())).toList();
     });
 
-    _database.watchOrder(purchaseCollection).listen((event) {
+    /* _database.watchOrder(purchaseCollection).listen((event) {
       if (event.docs.isEmpty) {
-        _purchcases.clear();
+        purchcases.clear();
       } else {
-        _purchcases.value =
+        purchcases.value =
             event.docs.map((e) => PurchaseModel.fromJson(e.data())).toList();
       }
-    });
+    }); */
     _database.watch(advertisementCollection).listen((event) {
       if (event.docs.isEmpty) {
         advertisementList.clear();
@@ -883,6 +888,8 @@ class HomeController extends GetxController {
     });
 
     //-----------------------On Auth Change-------------------------------//
+    StreamSubscription? adminOrderSubscription;
+    StreamSubscription? userOrderSubscription;
     _auth.onAuthChange().listen((user) async {
       if (user == null) {
         currentUser.value = null;
@@ -899,7 +906,7 @@ class HomeController extends GetxController {
               "because this user is completely new user.");
           currentUser.value = AuthUser(
             id: user.uid,
-            emailAddress: user.email ?? "",
+            emailAddress: user.email ?? user.phoneNumber ?? "",
             userName: user.displayName ?? "",
             image: user.photoURL ?? "",
             points: 0,
@@ -922,8 +929,10 @@ class HomeController extends GetxController {
           currentUserPoint = currentUser.value!.points;
           log("************current user points: $currentUserPoint*********");
           if (!(currentUser.value == null) &&
-              (currentUser.value!.status! > 0) &&
-              !isSubscribeToTopic.value) {
+                  (currentUser.value!.status! >
+                      0) /*  &&
+              !isSubscribeToTopic.value */
+              ) {
             //This is Admin,so we need to do admin related functions
             //SubscribeToTopic,UnsubscribeToTopic is required becuase
             //Firebase has rate-limited per project. If you send too many
@@ -932,15 +941,71 @@ class HomeController extends GetxController {
             //So we should check and shouldn't change user's status many time
             //to prevent happening undesire "quota-exceeded" response.
             await FirebaseMessaging.instance.subscribeToTopic('order');
+            if (!(adminOrderSubscription == null)) {
+              adminOrderSubscription?.cancel();
+            }
+            adminOrderSubscription =
+                _database.watchOrder(purchaseCollection).listen((event) {
+              if (event.docs.isEmpty) {
+                purchcases.clear();
+              } else {
+                purchcases.value = event.docs
+                    .map((e) => PurchaseModel.fromJson(e.data()))
+                    .toList();
+              }
+            });
             isSubscribeToTopic.value = true;
             log("SubscribeToTopic: $isSubscribeToTopic ...");
           } else if (currentUser.value!.status! == 0 &&
               isSubscribeToTopic.value) {
             isSubscribeToTopic.value = false;
             await FirebaseMessaging.instance.unsubscribeFromTopic('order');
+            if (!(userOrderSubscription == null)) {
+              userOrderSubscription?.cancel();
+            }
+            userOrderSubscription = _database
+                .watchUserOrder(userId: currentUser.value?.id ?? "")
+                .listen((event) {
+              if (event.docs.isEmpty) {
+                purchcases.clear();
+              } else {
+                purchcases.value = event.docs
+                    .map((e) => PurchaseModel.fromJson(e.data()))
+                    .toList();
+                /*  var list = <PurchaseModel>[];
+                //this is where notify to user about order status
+                for (var e in event.docs) {
+                  var model = PurchaseModel.fromJson(e.data());
+                  list.add(model);
+                  purchcases.value = list;
+                  if (model.orderStatus == 1) {
+                    //order is confirmed
+                    Get.snackbar("Your Order '${model.id}' is confirmed", '');
+                  }
+                  if (model.orderStatus == 2) {
+                    //order is shipped
+                    Get.snackbar("Your Order '${model.id}' is shipped", '');
+                  }
+                } */
+              }
+            });
             log("SubscribeToTopic: $isSubscribeToTopic ...");
           } else {
             log("Nothing do sbscribe to topic..");
+            if (!(userOrderSubscription == null)) {
+              userOrderSubscription?.cancel();
+            }
+            userOrderSubscription = _database
+                .watchUserOrder(userId: currentUser.value?.id ?? "")
+                .listen((event) {
+              if (event.docs.isEmpty) {
+                purchcases.clear();
+              } else {
+                purchcases.value = event.docs
+                    .map((e) => PurchaseModel.fromJson(e.data()))
+                    .toList();
+              }
+            });
           }
         });
 
@@ -1050,7 +1115,38 @@ class HomeController extends GetxController {
       ),
     );
   }
+
   //-------------For Reward----------------------//
+  var changing = false.obs;
+  Future<void> changeOrderStatus(
+      {required PurchaseModel purchaseModel, required int? status}) async {
+    try {
+      changing.value = true;
+      await FirebaseFirestore.instance
+          .collection(purchaseCollection)
+          .doc(purchaseModel.id)
+          .update(
+        {
+          "orderStatus": status,
+        },
+      );
+      if (status == 0) {
+        //confirm,so we increased customer's point
+        await _database.updateRemainWhenConfirmed(purchaseModel);
+        await _database.functionForUserPoint(purchaseModel);
+      }
+      changing.value = false;
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+    } catch (e) {
+      changing.value = false;
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      log("$e");
+    }
+  }
 
   Future<void> signInWithGoogle(/*String redirectRouteUrl*/) async {
     showLoading();
@@ -1076,6 +1172,26 @@ class HomeController extends GetxController {
       log("Sign in with google error: $e");
       hideLoading();
     }
+  }
+
+  Future<void> signInWithApple() async {
+    final credentials = await SignInWithApple.getAppleIDCredential(scopes: [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName
+    ]);
+    debugPrint(credentials.email);
+    debugPrint(credentials.state);
+    OAuthProvider oAuthProvider = OAuthProvider("apple.com");
+    final AuthCredential credential = oAuthProvider.credential(
+      idToken: String.fromCharCodes(credentials.identityToken!.codeUnits),
+      accessToken:
+          String.fromCharCodes(credentials.authorizationCode.codeUnits),
+    );
+    await FirebaseAuth.instance
+        .signInWithCredential(credential)
+        .then((value) => {
+              Get.offNamed(homeScreen),
+            });
   }
 
   int currentUserPoint = 0;
@@ -1149,7 +1265,7 @@ class HomeController extends GetxController {
     await FirebaseAuth.instance.signOut();
     hideLoading();
     currentUser.value = null;
-    Get.offNamed(introScreen);
+    //Get.offNamed(introScreen);
   }
 
   Future<void> deleteAccount() async {

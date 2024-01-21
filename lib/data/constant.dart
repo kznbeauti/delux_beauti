@@ -7,6 +7,7 @@ const Color appBarTitleColor = Color.fromRGBO(19, 19, 19, 1);
 const Color homeIndicatorColor = Colors.red;
 const Color detailBackgroundColor = Colors.white;
 const Color detailTextBackgroundColor = Colors.white;
+const Color logoColor = Color(0xFF242021);
 ButtonStyle buttonStyle = ButtonStyle(
   backgroundColor: MaterialStateProperty.all(Colours.red),
 );
@@ -29,6 +30,9 @@ const String adminUserCollection = 'adminUserCollection';
 const String promotionCollection = 'promotions';
 const String divisionCollection = 'divisions';
 const String advertisementCollection2 = "advertisementColection2";
+const String googleLogo = "assets/google.png";
+const String appleLogo = "assets/apple.png";
+const orderSuccessImage = "assets/successful.png";
 
 /*const List<String> priceList = [
   '၁ ထည် လက်လီ ဈေးနှုန်း',
