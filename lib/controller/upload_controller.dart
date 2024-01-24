@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
+import 'package:kozarni_ecome/model/schedule_sale.dart';
 import 'package:kozarni_ecome/model/size.dart';
 import 'package:kozarni_ecome/service/api.dart';
 import 'package:kozarni_ecome/service/database.dart';
@@ -36,12 +37,21 @@ class UploadController extends GetxController {
   TextEditingController remainQuantity = TextEditingController();
   TextEditingController ingredientController = TextEditingController();
   TextEditingController howToUseController = TextEditingController();
+  TextEditingController scheduleSaleTitle = TextEditingController();
+  TextEditingController scheduleSalePrice = TextEditingController();
+  Rxn<DateTime> scheduleSaleEndDate = Rxn(null);
 
   String advertisementID = "";
   var status = "".obs;
   /**************************** */
   var selectedBrandId = "".obs;
   RxList<String> selectedCategories = <String>[].obs;
+
+  void clearSchedule() {
+    scheduleSaleTitle.clear();
+    scheduleSalePrice.clear();
+    scheduleSaleEndDate.value = null;
+  }
 
   void setSelectedCategories(String value) {
     if (selectedCategories.contains(value)) {
@@ -84,6 +94,9 @@ class UploadController extends GetxController {
       photo2Controller.text = editItem.photo2;
       photo3Controller.text = editItem.photo3;
       nameController.text = editItem.name;
+      scheduleSaleTitle.text = editItem.scheduleSale?.title ?? "";
+      scheduleSalePrice.text = editItem.scheduleSale?.price.toString() ?? "";
+      scheduleSaleEndDate.value = editItem.scheduleSale?.endTime;
       descriptionController.text = editItem.description;
       sizePriceMap.value = Map<String, Size>.fromIterable(
         _homeController.editItem.value!.size!,
@@ -229,6 +242,14 @@ class UploadController extends GetxController {
                   originalPrice: int.tryParse(originalPrice.text) ?? 0,
                   originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
                   remainQuantity: int.tryParse(remainQuantity.text) ?? 0,
+                  deliveryTime: deliveryTimeController.text,
+                  scheduleSale: int.tryParse(scheduleSalePrice.text) == null
+                      ? null
+                      : ScheduleSale(
+                          title: scheduleSaleTitle.text,
+                          price: int.tryParse(scheduleSalePrice.text) ?? 0,
+                          endTime: scheduleSaleEndDate.value!,
+                        ),
                 )
                 .toJson(),
           );
@@ -262,6 +283,14 @@ class UploadController extends GetxController {
               originalPrice: int.tryParse(originalPrice.text) ?? 0,
               originalQuantity: int.tryParse(originalQuantity.text) ?? 0,
               remainQuantity: int.tryParse(remainQuantity.text) ?? 0,
+              deliveryTime: deliveryTimeController.text,
+              scheduleSale: int.tryParse(scheduleSalePrice.text) == null
+                  ? null
+                  : ScheduleSale(
+                      title: scheduleSaleTitle.text,
+                      price: int.tryParse(scheduleSalePrice.text) ?? 0,
+                      endTime: scheduleSaleEndDate.value!,
+                    ),
             ).toJson(),
           );
         }

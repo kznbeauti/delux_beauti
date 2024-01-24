@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:kozarni_ecome/model/schedule_sale.dart';
 import 'package:kozarni_ecome/model/size.dart';
 
 part 'product.freezed.dart';
@@ -35,6 +36,7 @@ class Product with _$Product {
     int? remainQuantity,
     @JsonKey(nullable: true) String? ingredients,
     @JsonKey(nullable: true) String? howToUse,
+    ScheduleSale? scheduleSale,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -76,5 +78,9 @@ class Product with _$Product {
         remainQuantity: json['remainQuantity'] as int?,
         ingredients: json["ingredients"] as String?,
         howToUse: json["howToUse"] as String?,
+        scheduleSale: json["scheduleSale"] == null
+            ? null
+            : ScheduleSale.fromJson(
+                json["scheduleSale"] as Map<String, dynamic>),
       );
 }

@@ -59,3 +59,7 @@ OrderStatus getOrderStatus(PurchaseModel model) {
       return OrderStatus.oldOrder;
   }
 }
+
+bool notSaleEnd(DateTime endTime) {
+  return endTime.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch;
+}

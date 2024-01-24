@@ -3,8 +3,11 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
 import 'package:get/get.dart';
@@ -13,6 +16,7 @@ import 'package:kozarni_ecome/model/product.dart';
 import 'package:kozarni_ecome/routes/routes.dart';
 import 'package:kozarni_ecome/screen/product_detail/controller/product_detail_controller.dart';
 import 'package:kozarni_ecome/screen/view/home.dart';
+import 'package:kozarni_ecome/utils/extension.dart';
 import '../../../utils/fun.dart';
 import '../../../widgets/product_review/product_review.dart';
 import '../../home_screen.dart';
@@ -211,28 +215,114 @@ class _DetailScreenState extends State<DetailScreen> {
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
                 decoration: (!(currentProduct.discountPrice == null) &&
-                        (currentProduct.discountPrice ?? 0) > 0)
+                            (currentProduct.discountPrice ?? 0) > 0) ||
+                        (!(currentProduct.scheduleSale == null) &&
+                            (currentProduct.scheduleSale!.price > 0))
                     ? TextDecoration.lineThrough
                     : null,
               ),
             ).withPadding(v: 5, h: 20),
           ),
           //Discount Price
-          (!(currentProduct.discountPrice == null) &&
-                  (currentProduct.discountPrice ?? 0) > 0)
+          (!(currentProduct.scheduleSale == null) &&
+                  notSaleEnd(currentProduct.scheduleSale!.endTime))
               ? Center(
-                  child: Text(
-                    (currentProduct.discountPrice ?? 0) > 0
-                        ? "${currentProduct.discountPrice} Ks"
-                        : "no discount price",
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  ).withPadding(v: 5, h: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        (currentProduct.scheduleSale?.price ?? 0) > 0
+                            ? "${currentProduct.scheduleSale?.price} Ks"
+                            : "no discount price",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ).withPadding(v: 5, h: 0),
+                      5.horizontal(),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: homeIndicatorColor,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(3),
+                            )),
+                        padding: EdgeInsets.all(5),
+                        child: Text(
+                          "Sale",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : (!(currentProduct.discountPrice == null) &&
+                      (currentProduct.discountPrice ?? 0) > 0)
+                  ? Center(
+                      child: Text(
+                        (currentProduct.discountPrice ?? 0) > 0
+                            ? "${currentProduct.discountPrice} Ks"
+                            : "no discount price",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ).withPadding(v: 5, h: 20),
+                    )
+                  : const SizedBox(),
+
+          //Available Time
+          !(currentProduct.scheduleSale == null)
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                      top: 8, bottom: 8, left: 40, right: 40),
+                  child: Card(
+                    elevation: 5,
+                    /* padding: EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 0,
+                    ), */
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "${currentProduct.scheduleSale?.title.toUpperCase()} ENDS SOON:",
+                        ),
+                        /* Icon(
+                          FontAwesomeIcons.clock,
+                          size: 13,
+                        ), */
+                        5.vertical(),
+                        TimerCountdown(
+                          format: CountDownTimerFormat.daysHoursMinutesSeconds,
+                          endTime: currentProduct.scheduleSale!.endTime,
+                          onEnd: () {
+                            print("Timer finished");
+                          },
+                          timeTextStyle: TextStyle(fontSize: 20),
+                          descriptionTextStyle: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                        /* Text(
+                          "${DateFormat.yMEd().add_jms().format(currentProduct.scheduleSale!.endTime)}",
+                          style: GoogleFonts.sanchez(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ), */
+                      ],
+                    ).withPadding(v: 10, h: 0),
+                  ),
                 )
               : const SizedBox(),
           Divider(),
+          //
           ExpansionPanelList(
             elevation: 0,
             children: [
@@ -489,6 +579,16 @@ class _DetailScreenState extends State<DetailScreen> {
                     : ElevatedButton(
                         style: buttonStyle,
                         onPressed: () {
+                          if ((currentProduct.scheduleSale?.endTime
+                                      .millisecondsSinceEpoch ??
+                                  0) >
+                              DateTime.now().millisecondsSinceEpoch) {
+                            //for schedule sale
+                            controller.addToCart(currentProduct,
+                                price: currentProduct.price);
+                            Get.back();
+                            return;
+                          }
                           if ((currentProduct.color == null) &&
                               (currentProduct.size == null ||
                                   (currentProduct.size?.isEmpty == true))) {

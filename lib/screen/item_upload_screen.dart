@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:kozarni_ecome/controller/home_controller.dart';
 import 'package:kozarni_ecome/controller/upload_controller.dart';
 import 'package:kozarni_ecome/data/constant.dart';
+import 'package:kozarni_ecome/utils/extension.dart';
 import 'package:kozarni_ecome/widgets/animate_size_list/animate_size_list.dart';
 import 'package:kozarni_ecome/widgets/home_category.dart';
 import 'package:kozarni_ecome/widgets/status_button_list.dart';
 import 'package:kozarni_ecome/widgets/tag_button_list.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../widgets/animate_size_list/sizeprice_item.dart';
 
@@ -30,6 +35,7 @@ class _UploadItemState extends State<UploadItem> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: scaffoldBackground,
         appBar: AppBar(
@@ -357,6 +363,121 @@ class _UploadItemState extends State<UploadItem> {
                 Obx(() => controller.sizePriceMap.isNotEmpty
                     ? sizePriceListWidget()
                     : const SizedBox(height: 0)),
+                /* ListView(
+                  primary: false,
+                  shrinkWrap: false,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [ */
+                //row
+                20.vertical(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Schedule Sales(Optional):"),
+                      IconButton(
+                        onPressed: () => controller.clearSchedule(),
+                        icon: Icon(
+                          Icons.clear,
+                          size: 24,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 70,
+                  width: size.width,
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 5,
+                    bottom: 5,
+                  ),
+                  child: Row(
+                    children: [
+                      //title
+                      Expanded(
+                        child: TextFormField(
+                          controller: controller.scheduleSaleTitle,
+                          validator: (value) => controller.validator(
+                              value: value, isOptional: true),
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            hintText: 'Sale Title',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      10.horizontal(),
+                      //price
+                      Expanded(
+                        child: TextFormField(
+                          controller: controller.scheduleSalePrice,
+                          validator: (value) => controller.validator(
+                              value: value, isOptional: true),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Sale Price',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //datetime
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(left: 20),
+                  child: TextButton(
+                    onPressed: () {
+                      Get.dialog(
+                        Center(
+                          child: SizedBox(
+                            height: 400,
+                            width: 300,
+                            child: Material(
+                              child: SfDateRangePicker(
+                                onSelectionChanged: (d) {
+                                  controller.scheduleSaleEndDate.value =
+                                      d.value;
+                                  Get.back();
+                                },
+                                selectionMode:
+                                    DateRangePickerSelectionMode.single,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Pick schedule date(optional)",
+                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                    ),
+                  ),
+                ),
+                Obx(() => controller.scheduleSaleEndDate.value == null
+                    ? const SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                          left: 35,
+                          bottom: 10,
+                        ),
+                        child: Text(
+                          DateFormat.yMEd()
+                              .add_jms()
+                              .format(controller.scheduleSaleEndDate.value!),
+                        ),
+                      )),
+                /*  ],
+                ), */
                 //Reward Point
                 Padding(
                   padding: EdgeInsets.only(
@@ -441,7 +562,7 @@ class _UploadItemState extends State<UploadItem> {
                     validator: (value) =>
                         controller.validator(value: value, isOptional: true),
                     decoration: InputDecoration(
-                      hintText: 'Delivery Time',
+                      hintText: 'Available Time',
                       border: OutlineInputBorder(),
                     ),
                   ),

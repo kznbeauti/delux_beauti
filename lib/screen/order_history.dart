@@ -151,12 +151,14 @@ class OrderHistory extends StatelessWidget {
                                           return Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 5),
-                                            child: Row(
-                                              mainAxisAlignment:
+                                            child: Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              /* mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start, */
                                               children: [
                                                 Text(
                                                   "${o + 1}. ${purchase.items[o].itemName}",
@@ -164,32 +166,38 @@ class OrderHistory extends StatelessWidget {
                                                       TextStyle(fontSize: 12),
                                                 ),
                                                 SizedBox(
-                                                  width: 25,
+                                                  width: 10,
                                                 ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      // Text(
-                                                      //   "${purchase.items[o].color  ?? "no color"}",
-                                                      //   style:
-                                                      //   TextStyle(fontSize: 10),
-                                                      // ),
-                                                      Text(
-                                                        "${purchase.items[o].size ?? "no size"}",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      )
-                                                    ],
-                                                  ),
+                                                /* Expanded(
+                                                  child:  */
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Text(
+                                                    //   "${purchase.items[o].color  ?? "no color"}",
+                                                    //   style:
+                                                    //   TextStyle(fontSize: 10),
+                                                    // ),
+                                                    Text(
+                                                      "${purchase.items[o].size ?? "no size"}",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    )
+                                                  ],
                                                 ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                /* ), */
+                                                /* Expanded(
+                                                  child:  */
                                                 Text(
-                                                  "$itemPrice x  ${purchase.items[o].count}",
+                                                  "$itemPriceကျပ် x  ${purchase.items[o].count}",
                                                   style:
                                                       TextStyle(fontSize: 12),
                                                 ),
+                                                /*  ), */
                                               ],
                                             ),
                                           );

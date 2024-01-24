@@ -24,6 +24,7 @@ import 'package:kozarni_ecome/model/view_all_model.dart';
 import 'package:kozarni_ecome/service/api.dart';
 import 'package:kozarni_ecome/service/auth.dart';
 import 'package:kozarni_ecome/service/database.dart';
+import 'package:kozarni_ecome/utils/fun.dart';
 import 'package:kozarni_ecome/widgets/show_dialog/show_dialog.dart';
 import 'package:kozarni_ecome/widgets/show_loading/show_loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -283,7 +284,10 @@ class HomeController extends GetxController {
         size: size?[0],
         color: color,
         price: price,
-        discountPrice: product.discountPrice,
+        discountPrice: (!(product.scheduleSale == null) &&
+                notSaleEnd(product.scheduleSale!.endTime))
+            ? product.scheduleSale!.price
+            : product.discountPrice,
         requirePoint: product.requirePoint,
         remainQuantity: product.remainQuantity,
       ));
@@ -447,26 +451,6 @@ class HomeController extends GetxController {
       Rxn<Either<None, PromotionType>>(right(PromotionType.nothing()));
   var promotionObxValue = 0.obs;
   void updateSubTotal(bool isUpdate) {
-    /* try {
-      final pro = promotionList
-          .where((e) => e.code == promotionValue)
-          .first
-          .promotionValue;
-      //we check this is percentage or money
-      if (pro.contains("%")) {
-        //this is percentage
-        promotionObxValue.value = int.tryParse(pro.split("%").first) ?? 0;
-        promotionType.value = right(PromotionType.percentage());
-      } else {
-        promotionObxValue.value = int.tryParse(pro.split("Ks").first) ?? 0;
-        promotionType.value = right(PromotionType.money());
-      }
-    } catch (e) {
-      promotionObxValue.value = 0;
-      promotionType.value = right(PromotionType.nothing());
-    } */
-    // promotionObxValue.value = promotionValue!.isEmpty ? 0 :
-    // promotionList.where((e) => e.id == promotionValue).first.promotionValue;
     if (subTotal != 0) {
       subTotal = 0;
     }
