@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kozarni_ecome/screen/view/profile.dart';
+import 'package:kozarni_ecome/widgets/show_loading/show_loading.dart';
 
 class AuthenticationController extends GetxController {
   var passwordSecure = true.obs;
@@ -101,12 +102,14 @@ class AuthenticationController extends GetxController {
           Get.to(
             () => PhoneVerificationPage(
               onCompleted: (v) async {
+                showLoading();
                 PhoneAuthCredential credential = PhoneAuthProvider.credential(
                     verificationId: verificationId, smsCode: v);
 
                 // Sign the user in (or link) with the credential
                 await FirebaseAuth.instance.signInWithCredential(credential);
                 emailSignInLoading.value = false;
+                hideLoading();
                 Get.back();
                 Get.snackbar("Login Success!", "",
                     snackPosition: SnackPosition.BOTTOM,

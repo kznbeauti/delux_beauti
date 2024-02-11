@@ -217,7 +217,9 @@ class _DetailScreenState extends State<DetailScreen> {
                 decoration: (!(currentProduct.discountPrice == null) &&
                             (currentProduct.discountPrice ?? 0) > 0) ||
                         (!(currentProduct.scheduleSale == null) &&
-                            (currentProduct.scheduleSale!.price > 0))
+                            (currentProduct.scheduleSale!.price > 0 &&
+                                notSaleEnd(
+                                    currentProduct.scheduleSale!.endTime)))
                     ? TextDecoration.lineThrough
                     : null,
               ),
@@ -275,7 +277,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   : const SizedBox(),
 
           //Available Time
-          !(currentProduct.scheduleSale == null)
+          !(currentProduct.scheduleSale == null) &&
+                  notSaleEnd(currentProduct.scheduleSale!.endTime)
               ? Padding(
                   padding: const EdgeInsets.only(
                       top: 8, bottom: 8, left: 40, right: 40),

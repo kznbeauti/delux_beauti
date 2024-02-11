@@ -245,26 +245,51 @@ class PurchaseDialogButton extends StatelessWidget {
     final HomeController controller = Get.find();
     switch (getOrderStatus(purchaseModel)) {
       case OrderStatus.newOrder:
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.green,
-          ),
-          onPressed: () {
-            //TODO:Confirm this order
-            controller.changeOrderStatus(
-              purchaseModel: purchaseModel,
-              status: 0,
-            );
-          },
-          child: controller.changing.value
-              ? SizedBox(
-                  height: 35,
-                  width: 35,
-                  child: CircularProgressIndicator(
-                    color: homeIndicatorColor,
-                  ),
-                )
-              : Text("Confirm"),
+        return Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green,
+              ),
+              onPressed: () {
+                //TODO:Confirm this order
+                controller.changeOrderStatus(
+                  purchaseModel: purchaseModel,
+                  status: 0,
+                );
+              },
+              child: controller.changing.value
+                  ? SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: CircularProgressIndicator(
+                        color: homeIndicatorColor,
+                      ),
+                    )
+                  : Text("Confirm"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+              ),
+              onPressed: () {
+                //TODO:Confirm this order
+                controller.changeOrderStatus(
+                  purchaseModel: purchaseModel,
+                  status: 2,
+                );
+              },
+              child: controller.changing.value
+                  ? SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: CircularProgressIndicator(
+                        color: homeIndicatorColor,
+                      ),
+                    )
+                  : Text("Cancel"),
+            ),
+          ],
         );
       case OrderStatus.confirmed:
         return Column(
@@ -311,6 +336,14 @@ class PurchaseDialogButton extends StatelessWidget {
             ));
           },
           child: Text("Print Preview"),
+        );
+      case OrderStatus.canceled:
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: homeIndicatorColor,
+          ),
+          onPressed: null,
+          child: Text("Canceled"),
         );
       default:
         return ElevatedButton(

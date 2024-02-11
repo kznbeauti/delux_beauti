@@ -936,17 +936,15 @@ class PhoneVerificationPage extends StatelessWidget {
                             },
                           ),
                           20.vertical(),
-                          ElevatedButton(
-                            onPressed: authController.codeRetrieveTimeout.value
-                                ? resendCode
-                                : () => authController.login(),
-                            child: Text(
-                              authController.codeRetrieveTimeout.value
-                                  ? "Resend"
-                                  : "Verify",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ).withCenter(),
+                          authController.codeRetrieveTimeout.value
+                              ? ElevatedButton(
+                                  onPressed: resendCode,
+                                  child: Text(
+                                    "Resend",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ).withCenter()
+                              : const SizedBox(),
                         ],
                       );
                     }),

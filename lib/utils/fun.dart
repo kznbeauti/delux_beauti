@@ -16,7 +16,9 @@ Map<String, dynamic> getStatusOrderUser(int? status) {
     case 0:
       return {"color": Colors.green, "status": "Confirmed", "num": 0};
     case 1:
-      return {"color": Colors.red, "status": "Shipped", "num": 1};
+      return {"color": Colors.blue, "status": "Shipped", "num": 1};
+    case 2:
+      return {"color": Colors.red, "status": "Canceled", "num": 2};
     default:
       return {};
   }
@@ -36,13 +38,15 @@ Map<String, dynamic> getStatusOrderAdmin(PurchaseModel model) {
     case 0:
       return {"color": Colors.green, "status": "Confirmed", "num": 0};
     case 1:
-      return {"color": Colors.red, "status": "Shipped", "num": 1};
+      return {"color": Colors.blue, "status": "Shipped", "num": 1};
+    case 2:
+      return {"color": Colors.red, "status": "Canceled", "num": 2};
     default:
       return {};
   }
 }
 
-enum OrderStatus { newOrder, confirmed, shipped, oldOrder }
+enum OrderStatus { newOrder, confirmed, shipped, oldOrder, canceled }
 
 OrderStatus getOrderStatus(PurchaseModel model) {
   int? status = model.orderStatus;
@@ -55,6 +59,8 @@ OrderStatus getOrderStatus(PurchaseModel model) {
       return OrderStatus.confirmed;
     case 1:
       return OrderStatus.shipped;
+    case 2:
+      return OrderStatus.canceled;
     default:
       return OrderStatus.oldOrder;
   }
