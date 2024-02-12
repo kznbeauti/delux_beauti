@@ -47,7 +47,7 @@ class OrderHistory extends StatelessWidget {
           /* valueListenable: Hive.box<HivePurchase>(purchaseBox).listenable(),
           builder: */
           (/* context, Box<HivePurchase> box, widget */) {
-            final orders = controller.purchcases;
+            final orders = controller.orderHistoryPurchases;
             return orders.isNotEmpty
                 ? SizedBox(
                     height: size.height,

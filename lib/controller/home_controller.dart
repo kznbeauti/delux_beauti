@@ -551,6 +551,8 @@ class HomeController extends GetxController {
   }
 
   final RxList<PurchaseModel> purchcases = <PurchaseModel>[].obs; ////
+  final RxList<PurchaseModel> orderHistoryPurchases =
+      <PurchaseModel>[].obs; ////
 
   List<PurchaseModel> purchcasesCashOn() {
     return purchcases.where((item) => item.bankSlipImage == null).toList();
@@ -912,6 +914,44 @@ class HomeController extends GetxController {
           currentUser.value = AuthUser.fromJson(event.data()!);
           currentUserPoint = currentUser.value!.points;
           log("************current user points: $currentUserPoint*********");
+          if (!(currentUser.value == null)) {
+            //for user
+            if (currentUser.value!.status! == 0 && isSubscribeToTopic.value) {
+              isSubscribeToTopic.value = false;
+              await FirebaseMessaging.instance.unsubscribeFromTopic('order');
+              if (!(userOrderSubscription == null)) {
+                userOrderSubscription?.cancel();
+              }
+              userOrderSubscription = _database
+                  .watchUserOrder(userId: currentUser.value?.id ?? "")
+                  .listen((event) {
+                if (event.docs.isEmpty) {
+                  orderHistoryPurchases.clear();
+                } else {
+                  orderHistoryPurchases.value = event.docs
+                      .map((e) => PurchaseModel.fromJson(e.data()))
+                      .toList();
+                }
+              });
+              log("SubscribeToTopic: $isSubscribeToTopic ...");
+            } else {
+              log("Nothing do sbscribe to topic..");
+              if (!(userOrderSubscription == null)) {
+                userOrderSubscription?.cancel();
+              }
+              userOrderSubscription = _database
+                  .watchUserOrder(userId: currentUser.value?.id ?? "")
+                  .listen((event) {
+                if (event.docs.isEmpty) {
+                  orderHistoryPurchases.clear();
+                } else {
+                  orderHistoryPurchases.value = event.docs
+                      .map((e) => PurchaseModel.fromJson(e.data()))
+                      .toList();
+                }
+              });
+            }
+          }
           if (!(currentUser.value == null) &&
                   (currentUser.value!.status! >
                       0) /*  &&
@@ -940,56 +980,6 @@ class HomeController extends GetxController {
             });
             isSubscribeToTopic.value = true;
             log("SubscribeToTopic: $isSubscribeToTopic ...");
-          } else if (currentUser.value!.status! == 0 &&
-              isSubscribeToTopic.value) {
-            isSubscribeToTopic.value = false;
-            await FirebaseMessaging.instance.unsubscribeFromTopic('order');
-            if (!(userOrderSubscription == null)) {
-              userOrderSubscription?.cancel();
-            }
-            userOrderSubscription = _database
-                .watchUserOrder(userId: currentUser.value?.id ?? "")
-                .listen((event) {
-              if (event.docs.isEmpty) {
-                purchcases.clear();
-              } else {
-                purchcases.value = event.docs
-                    .map((e) => PurchaseModel.fromJson(e.data()))
-                    .toList();
-                /*  var list = <PurchaseModel>[];
-                //this is where notify to user about order status
-                for (var e in event.docs) {
-                  var model = PurchaseModel.fromJson(e.data());
-                  list.add(model);
-                  purchcases.value = list;
-                  if (model.orderStatus == 1) {
-                    //order is confirmed
-                    Get.snackbar("Your Order '${model.id}' is confirmed", '');
-                  }
-                  if (model.orderStatus == 2) {
-                    //order is shipped
-                    Get.snackbar("Your Order '${model.id}' is shipped", '');
-                  }
-                } */
-              }
-            });
-            log("SubscribeToTopic: $isSubscribeToTopic ...");
-          } else {
-            log("Nothing do sbscribe to topic..");
-            if (!(userOrderSubscription == null)) {
-              userOrderSubscription?.cancel();
-            }
-            userOrderSubscription = _database
-                .watchUserOrder(userId: currentUser.value?.id ?? "")
-                .listen((event) {
-              if (event.docs.isEmpty) {
-                purchcases.clear();
-              } else {
-                purchcases.value = event.docs
-                    .map((e) => PurchaseModel.fromJson(e.data()))
-                    .toList();
-              }
-            });
           }
         });
 
